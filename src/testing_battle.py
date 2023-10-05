@@ -293,6 +293,7 @@ def battle(players :list,enemies :list):
                                 else:
                                     print("Fallen enemies cannot be attacked")
                                     continue
+                        break #getting to this line should mean a skill has been successfully used
                     else: # action is "3" as in a normal attack
                         print(f"{player.name} fails to act")
                         break
