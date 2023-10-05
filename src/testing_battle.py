@@ -1,3 +1,138 @@
+class Character():
+    def __init__(self, name :str, stats :dict, level :int, description :str):
+        """ Used for both playable and npc characters. """
+        self.name = name
+        self.stats = stats
+        self.multipliers = None # necessary for leveling up, only relevant for playable characters
+        self.level = level
+        self.exp = 0
+        self.skills = []
+        self.weapon = Equipment("weapon",[0,0],"Has to have some weapon to avoid errors")
+        self.armour = Equipment("armour",[0,0],"Has to have some armour to avoid errors")
+        self.description = description
+        self.alive = True
+        self.lost_hp = 0
+        self.given_exp = 0 # how much exp enemy gives when defeated
+        self.enemy = False #change to True if npc turns hostile to player
+        # self.skillset could be implemented to have character learn specific skills
+        # at specific levels
+    
+    def gain_exp(self,exp):
+        """ Each level up takes current level * 10 experience. """
+        self.exp += exp
+        while True:
+            if self.exp >= self.level * 10:
+                self.exp -= self.level * 10
+                self.level += 1
+                self.stats["hp"] += self.lost_hp
+                self.lost_hp = 0
+                self.stats["hp"] = int(self.multipliers["hp"] * self.stats["hp"])
+                self.stats["atk"] = int(self.multipliers["atk"] * self.stats["atk"])
+                self.stats["magic"] = int(self.multipliers["magic"] * self.stats["magic"])
+            else:
+                break
+
+    def take_damage(self,damage):
+        """ Use this to damage or heal characters. Healing done
+        with negative numbers. Returns "dead" if damage is fatal.
+        Otherwise returns damage taken """
+        if damage < 0:
+            if self.lost_hp + damage <= 0:
+                self.stats["hp"] += self.lost_hp
+                self.lost_hp = 0
+            else:
+                self.stats["hp"] -= damage
+                self.lost_hp += damage
+            return True
+
+        if self.stats["hp"] - damage <= 0:
+            self.lost_hp += self.stats["hp"]
+            self.stats["hp"] = 0
+            self.alive = False
+            return "dead" 
+        else:
+            self.stats["hp"] -= damage
+            self.lost_hp += damage
+        return True
+
+class Equipment():
+    def __init__(self, type :str, stats :list, description :str):
+        """
+        type: weapon/armour
+        (more variety to armour pieces can be added later (gloves, boots...))
+        stats: [physical damage/armour, magical damage/armour]
+        description: for LLM to use when describing the equipment
+        """
+        self.type = type
+        self.stats = stats
+        self.description = description
+        self.durability = 100 # Do we want them to break eventually?
+
+class Skill():
+    def __init__(self, name :str, multiplier :float, stat :str, uses :int, description :str, ally: bool, aoe: bool):
+        """
+        name: name of the skill
+        multiplier: damage of skill = (character_stat + weapon_stat) * multiplier
+        stat: which stat is used for damage calculation (atk,magic)
+        uses: how many times skill can be used
+        description: how the LLM will describe it when asked
+        ally: is the skill cast on allies (True) or enemies (False)
+        aoe: does the skill affect all allies/enemies
+        """
+        self.name = name
+        self.multiplier = multiplier
+        self.stat = stat
+        self.uses = uses
+        self.uses_remaining = uses
+        self.description = description
+        self.ally = ally
+        self.aoe = aoe
+    def restore_uses(self):
+        self.uses_remaining = self.uses
+
+def create_main_character():
+    """ Creating the preset character that can be used before
+    we enable the player to create their own character """
+    name = "Hero"
+    level = 1
+    description = "Preset main character"
+    stats = {}
+    stats["hp"] = 30
+    stats["atk"] = 10
+    stats["magic"] = 10
+    multipliers = {}
+    multipliers["hp"] = 1.5
+    multipliers["atk"] = 1.5
+    multipliers["magic"] = 1.5
+    main_character = Character(name,stats,level,description)
+    main_character.multipliers = multipliers
+    sword = Equipment("weapon",[12,0],"Basic iron sword")
+    main_character.weapon = sword
+    fireball = Skill("Fire Ball",1.5,"magic",5,"Hurl a ball of fire at your enemy",False,False)
+    heal = Skill("Lesser Heal", -0.8,"magic",8,"Use magic to mend wounds",True,False)
+    shockwave = Skill("Shockwave", 500, "atk", 100, "Use to defeat everything",False,True)
+    main_character.skills.extend([fireball,heal,shockwave])
+    armour = Equipment("armour",[5,5],"Hero's armour")
+    main_character.armour = armour
+    return main_character
+
+def create_goblins():
+    """ Creating 4 goblins to test fighting against """
+    level = 1
+    description = "Weak looking Goblin"
+    goblin1 = Character("Goblin Warrior",{},level,description)
+    goblin2 = Character("Goblin Mage",{},level,description)
+    goblin3 = Character("Goblin Ranger",{},level,description)
+    goblin4 = Character("Goblin Hunter",{},level,description)
+    goblins = [goblin1,goblin2,goblin3,goblin4]
+    for goblin in goblins:
+        stats = {}
+        stats["hp"] = 30
+        stats["atk"] = 1
+        stats["magic"] = 1
+        goblin.stats = stats
+        goblin.given_exp = 100
+    return goblins
 from random import randint
 from time import sleep
 def battle(players :list,enemies :list):
@@ -172,3 +307,10 @@ def battle(players :list,enemies :list):
                     print(f"{players[0].name} took {damage} damage")
                 sleep(1)
                 #work in progress, can only attack main character and use normal attacks
+
+hero_party = [create_main_character()]
+goblin_party = create_goblins()
+
+print(battle(hero_party,goblin_party))
+second_wave = create_goblins()
+print(battle(hero_party,second_wave))
