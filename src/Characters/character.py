@@ -1,7 +1,8 @@
 from Characters.equipment import Equipment
 class Character():
-    def __init__(self, name :str, stats :dict, level :int, description :str):
+    def __init__(self, kind :str, name :str, stats :dict, level :int, description :str):
         """ Used for both playable and npc characters. """
+        self.kind = kind
         self.name = name
         self.stats = stats
         self.multipliers = None # necessary for leveling up, only relevant for playable characters
