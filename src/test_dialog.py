@@ -15,5 +15,6 @@ print(chat.talk_npc(mercenary_boss).render())
 npcs = [mercenary_boss, mercenary_a, mercenary_b]
 while True:
     reply = input('Ina (you): ')
+    chat.talk_player(player, reply)
     npc = npcs[random.randint(0, len(npcs) - 1)]
     print(chat.talk_npc(npc).render())
