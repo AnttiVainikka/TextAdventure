@@ -38,7 +38,7 @@ Pick one of them, and justify your choice.
         })[0]
 
         if len(self._choices) > 0:
-            prompt += f"""
+            prompt += f"""---
 {answer}
 
 Now, repeat the one-word answer:

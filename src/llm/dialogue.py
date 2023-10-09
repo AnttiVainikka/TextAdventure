@@ -33,7 +33,7 @@ class Dialogue:
     def to_prompt(self) -> str:
         # TODO global text adventure generator/GM prompt
         return f"""You are a text adventure game master.
-
+---
 This is a chat between the player character and several NPCs. The characters present are:
 {''.join([_character_intro(char) for char in self.characters])}
 
@@ -49,7 +49,7 @@ How would the NPC {character.name} initiate this conversation?
 Write what they would say below in exactly this format:
 <Character name>: "<their reply>"
 
-{character.name}:"""
+{'' if connector.chat_model else f'{character.name}:'}"""
         else:
             prompt = f"""{self.to_prompt()}
 
@@ -57,7 +57,7 @@ How would the NPC {character.name} reply to this?
 Write their reply below in this format:
 <Character name>: "<their reply>"
 
-{character.name}:"""
+{'' if connector.chat_model else f'{character.name}:'}"""
         result = connector.complete(prompt, {
             'temperature': 1.0,
             'stop_sequences': ['\n']

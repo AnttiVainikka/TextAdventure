@@ -51,11 +51,29 @@ _DEFAULT_OPTIONS: LlmOptions = {
 def _fill_options(options: LlmOptions) -> LlmOptions:
     return _DEFAULT_OPTIONS | (options or {})
 
+def _clear_chat_markers(prompt: str) -> tuple[str, str]:
+    return prompt.replace('---', '')
+
+class _ChatMessage(TypedDict):
+    role: str
+    content: str
+
+def _to_chat_prompt(prompt: str) -> list[_ChatMessage]:
+    parts = prompt.split('---')
+    messages = [{'role': 'system', 'content': parts[0]}]
+    user_role = True
+    for part in parts[1:]:
+        messages.append({'role': 'user' if user_role else 'assistant', 'content': part})
+        user_role = not user_role
+    return messages
+
 class LlmConnector(ABC):
     _bias_cache: dict[LogitBias, dict[str, float]]
+    chat_model: bool
 
-    def __init__(self):
+    def __init__(self, chat_model: bool):
         self._bias_cache = {}
+        self.chat_model = chat_model
 
     @abstractmethod
     def complete(self, prompt: str, options: LlmOptions) -> list[str]:
@@ -87,16 +105,16 @@ class CohereConnector(LlmConnector):
     _model: str
     _client: cohere.Client
 
-    def __init__(self):
-        super().__init__();
-        self._model = 'command-nightly'
+    def __init__(self, model: str):
+        super().__init__(chat_model=False);
+        self._model = model
         self._client = cohere.Client(os.environ['COHERE_API_KEY'])
 
     def complete(self, prompt: str, options: LlmOptions) -> list[str]:
         options = _fill_options(options)
         result = self._client.generate(
             model=self._model,
-            prompt=prompt,
+            prompt=_clear_chat_markers(prompt),
             temperature=options['temperature'],
             frequency_penalty=options['frequence_penalty'],
             presence_penalty=options['presence_penalty'],
@@ -112,23 +130,32 @@ class CohereConnector(LlmConnector):
 
 class OpenAIConnector(LlmConnector):
     _model: str
-    _chat_model: bool
     _encoding: tiktoken.Encoding
 
     def __init__(self, model: str, chat_model: bool):
-        super().__init__()
+        super().__init__(chat_model=chat_model)
         self._model = model
-        self._chat_model = chat_model
         self._encoding = tiktoken.encoding_for_model(model)
     
     def complete(self, prompt: str, options: LlmOptions) -> list[str]:
         options = _fill_options(options)
-        if self._chat_model:
-            raise ValueError('TODO')
+        if self.chat_model:
+            results = openai.ChatCompletion.create(
+                model=self._model,
+                messages=_to_chat_prompt(prompt),
+                temperature=options['temperature'],
+                frequency_penalty=options['frequence_penalty'],
+                presence_penalty=options['presence_penalty'],
+                logit_bias=self.parse_bias(options['logit_bias']),
+                max_tokens=options['max_tokens'],
+                n=options['generations'],
+                stop=options['stop_sequences'] if len(options['stop_sequences']) > 0 else None
+            )
+            return [gen.message.content for gen in results.choices]
         else:
             results = openai.Completion.create(
                 model=self._model,
-                prompt=prompt,
+                prompt=_clear_chat_markers(prompt),
                 temperature=options['temperature'],
                 frequency_penalty=options['frequence_penalty'],
                 presence_penalty=options['presence_penalty'],
@@ -146,6 +173,13 @@ _model_name = os.environ['ADVENTURE_LLM']
 connector: LlmConnector
 
 if _model_name == 'cohere':
-    connector = CohereConnector()
+    connector = CohereConnector('command')
+elif _model_name == 'command-nightly':
+    connector = CohereConnector('command-nightly')
 elif _model_name == 'gpt-3.5':
     connector = OpenAIConnector('gpt-3.5-turbo-instruct', chat_model=False)
+elif _model_name == 'gpt-3.5-chat':
+    connector = OpenAIConnector('gpt-3.5-turbo', chat_model=True)
+elif _model_name == 'gpt-4':
+    # EXPENSIVE, DO NOT USE
+    connector = OpenAIConnector('gpt-4', chat_model=True)
