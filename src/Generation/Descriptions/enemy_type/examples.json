@@ -1,0 +1,25 @@
+{
+    "Examples": 
+    [
+        {
+            "Common": ["Firestarter Imp", "Emberling", "Singed Gremlin"],
+            "Rare": ["Inferno Conjurer", "Smoldering Fiend", "Blazing Trickster"],
+            "Epic": ["Magma Enchantress", "Pyroclasmic Warlock", "Infernal Pyromancer"],
+            "Legendary": ["Ignatius, the Eternal Inferno", "Pyrelord Zephyrak", "Vulcanis the Flamebringer"]
+        }
+        ,
+        {
+            "Common": ["Bandit", "Brigand", "Footsoldier"],
+            "Rare": ["Knight", "Sorcerer", "Assassin"],
+            "Epic": ["Paladin", "Archmage", "Berserker"],
+            "Legendary": ["Sir Reginald, the Noble Champion", "Lysandra, the Enchanting Sorceress", "Erik the Ruthless, Master Assassin"]
+        }
+        ,
+        {
+            "Common": ["Breeze Sprite", "Zephyrling", "Gossamer Wisp"],
+            "Rare": ["Aeromancer", "Sylphid Sentinel", "Whispering Tempest"],
+            "Epic": ["Zephyr Enchantress", "Cyclonic Warlock", "Aetherial Stormweaver"],
+            "Legendary": ["Aerithra, the Wind Whisperer", "Zephyra, the Eternal Gale", "Eolus, the Aerial Sovereign"]
+        }
+    ]
+}
