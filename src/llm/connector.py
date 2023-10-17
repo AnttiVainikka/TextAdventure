@@ -6,6 +6,19 @@ import cohere
 import openai
 import tiktoken
 
+import log
+
+logger = log.getLogger(__name__)
+
+def LogComplete(func):
+    def wrapper(*args, **kwargs):
+        logger.info(f'USER\n{args[1]}')
+        result = func(*args, **kwargs)
+        logger.info(f"{_model_name}\n{' '.join(result)}")
+        return result
+    
+    return wrapper
+
 class LogitBias:
     bias: dict[str, float]
 
@@ -110,6 +123,7 @@ class CohereConnector(LlmConnector):
         self._model = model
         self._client = cohere.Client(os.environ['COHERE_API_KEY'])
 
+    @LogComplete
     def complete(self, prompt: str, options: LlmOptions) -> list[str]:
         options = _fill_options(options)
         result = self._client.generate(
@@ -137,6 +151,7 @@ class OpenAIConnector(LlmConnector):
         self._model = model
         self._encoding = tiktoken.encoding_for_model(model)
     
+    @LogComplete
     def complete(self, prompt: str, options: LlmOptions) -> list[str]:
         options = _fill_options(options)
         if self.chat_model:
