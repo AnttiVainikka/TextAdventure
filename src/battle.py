@@ -10,29 +10,29 @@ def battle(players :list,enemies :list):
     "defeat" if battle is lost
     "run" if player wishes to try to run away
     """
-    #Using skills doesn't currently consume skill uses. This should be fixed eventually.
-    #Also enemies don't have a turn yet
-    #Also also normal attacks don't work
+    #TODO Using skills doesn't currently consume skill uses.
+    #TODO enemies don't have a turn yet
+    #TODO normal attacks don't work
+    #TODO single target skills are hitting all enemies / healing all allies
     dead_enemies = 0
     dead_players = 0
     while True: #Loop that breaks when all enemies or players are dead
-        if len(enemies) - dead_enemies <= 0:
-            for enemy in enemies:
-                for player in players:
-                    player.gain_exp(enemy.given_exp)
-            return "victory"
-        if len(players) - dead_players <= 0:
-            return "defeat"
-        #Print the names and hp of all combatants at the start of every round
-        print("\nYour Party")
-        for player in players:
-            print(f"{player.name}:  HP: {player.stats['hp']}/{player.stats['hp']+player.lost_hp}")
-        print("\nEnemy Party")
-        for enemy in enemies:
-            print(f"{enemy.name}:  HP: {enemy.stats['hp']}/{enemy.stats['hp']+enemy.lost_hp}")
-        print("\n")
         #Ask the player to take action with each ally character
         for player in players:
+            sleep(1)
+            if len(enemies) - dead_enemies <= 0:
+                for enemy in enemies:
+                    for player in players:
+                        player.gain_exp(enemy.given_exp)
+                return "victory"
+            #Print the names, level and hp of all combatants at the start of every turn
+            print("\nYour Party")
+            for p in players:
+                print(f"{p.name} LVL {p.level}:  HP: {p.stats['hp']}/{p.stats['hp']+p.lost_hp}")
+            print("\nEnemy Party")
+            for e in enemies:
+                print(f"{e.name}: LVL {e.level}  HP: {e.stats['hp']}/{e.stats['hp']+e.lost_hp}")
+            print("\n")
             if player.alive:
                 while True: #breaks once player does an action
                     print("Attack:  1\nSkill:  2\nRun:  3\n")
@@ -172,4 +172,6 @@ def battle(players :list,enemies :list):
                 else:
                     print(f"{players[0].name} took {damage} damage")
                 sleep(1)
+                if len(players) - dead_players <= 0:
+                    return "defeat"
                 #work in progress, can only attack main character and use normal attacks
