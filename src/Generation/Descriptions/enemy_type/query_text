@@ -1,3 +1,2 @@
-Generate enemy type for the race "{{race}}" in the following form:
-{{form}}
+Generate enemy type for the race "{{race}}".
 For legendary type, generate a unique name too.

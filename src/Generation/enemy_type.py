@@ -25,31 +25,34 @@ class EnemyType:
     name: str
     rarity: Rarity
 
-def generate(race: str) -> list[EnemyType]:
+def generate(race: str) -> dict[Rarity, list[EnemyType]]:
     """
-    Generate a list of enemy types for a given race.
+    Generate a dict of enemy types for a given race.
 
     This function takes a 'race' parameter, which represents the race for which enemy types
-    need to be generated. It returns a list of EnemyType instances that correspond to the
+    need to be generated. It returns a dict of EnemyType instances that correspond to the
     specified race.
 
     Parameters:
     - race (str): A string representing the race for which enemy types should be generated.
 
     Returns:
-    - list: A list of EnemyType instances for the specified race.
+    - dict: A dict of enemy types where the keys are the rarities and the values are lists of enemy types
 
     Example:
     >>> generate("Orc")
-    [EnemyType("Orc", "Orc Warrior", Rarity.Common), ...]
+    {Common: [EnemyType("Orc", "Orc Warrior", Rarity.Common), ...], ...}
 
     >>> generate("Human")
-    [EnemyType("Human", "Human Soldier", Rarity.Rare), ...]
+    {Rare: [EnemyType("Human", "Human Soldier", Rarity.Rare), ...], ...}
     """
-    l = []
+    l = {}
     data = llm_create('enemy_type', race=race)[0].dict()
     for key in data:
         if key in Rarity.__members__:
+            ekey = Rarity[key]
+            if ekey not in l:
+                l[ekey] = []
             for name in data[key]:
-                l.append(EnemyType(race, name, Rarity[key]))
+                l[ekey].append(EnemyType(race, name, Rarity[key]))
     return l
