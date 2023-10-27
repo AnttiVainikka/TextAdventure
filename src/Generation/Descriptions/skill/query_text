@@ -1,0 +1,8 @@
+Generate a name and a description for a skill, that can be used in combats, based on the following informations.
+The user of the skill is a {{classtype}}.
+The type of the skill is {{type}}.
+The nature of the skill is {{nature}}.
+The rarity of the skill is {{rarity}}.
+It is a {{target}} target skill.
+
+Do not generate any made up effects, use only the provided informations.

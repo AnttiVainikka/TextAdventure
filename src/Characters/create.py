@@ -1,6 +1,8 @@
 from Characters.character import Character
 from Characters.equipment import Equipment
 from Characters.skill import Skill
+from Characters.skill import SkillRarity
+from Generation.skill import generate as generate_skill
 from random import randint
 
 def create_main_character():
@@ -49,7 +51,7 @@ def create_enemies(level: int, difficulty: int):
             difficulty -= difficulty
         lvl = max([1,level-7+rarity*3])
         type = ["warrior","rogue","mage"][randint(0,2)]
-        name = f"{["Beginner","Advanced","Expert","Legendary"][rarity-1]} {type}"
+        name = f'{["Beginner","Advanced","Expert","Legendary"][rarity-1]} {type}'
         description = "todo"
         #TODO Generate name and description for enemy with LLM using type, race, rarity...
         enemy = create_character(name,description,type,lvl,rarity)
@@ -180,12 +182,11 @@ def create_skill(type: str, rarity: int):
     if aoe:
         multiplier *= 0.5
     uses = randint(5,10)-rarity
-    if aoe:
-        aoe="All"
-    else:
-        aoe="Single"
-    name = f"{stat} {multiplier} {aoe}"
-    description = "todo"
-    # TODO generate name and description based on type, rarity, stat, aoe and ally
 
+    name, description = generate_skill(user_class=type,
+                                       skill_type="Heal" if ally else "Damage",
+                                       skill_nature="Physical" if stat == "atk" else "Magic",
+                                       skill_rarity=SkillRarity(rarity).name,
+                                       skill_target="AoE" if aoe else "Single")
+    
     return Skill(name,multiplier,stat,uses,description,ally,aoe)
