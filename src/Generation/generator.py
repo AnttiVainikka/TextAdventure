@@ -52,7 +52,7 @@ class Generator:
 
         try:
             # Try to get LLM generate us what we want
-            reply = llm.generate(query_parts[0], query_parts[1] if len(query_parts) > 0 else 'Answer:', self._model, self._examples, count)
+            reply = llm.generate(query_parts[0], query_parts[1] if len(query_parts) > 1 else 'Answer:', self._model, self._examples, count)
             return (True, reply)
         except llm.GenerateFailure as e:
             if len(self._fallbacks) > 0:

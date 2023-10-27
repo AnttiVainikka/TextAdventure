@@ -3,7 +3,7 @@ from typing import Type, TypeVar
 from pydantic import BaseModel, ValidationError
 import regex
 
-from llm import connector
+from llm.connector import connector, logger
 from llm.error import GenerateFailure
 
 def _schema_to_prompt(json_schema: dict[str, any]) -> str:
@@ -43,18 +43,21 @@ def gen_sample(prompt: str, to_type: type[T]) -> T:
         json_texts = _JSON_PATTERN.findall(result)
         if len(json_texts) == 0:
             # Just retry without editing the prompt
+            logger.warning(f'Generation failed, no JSON was found')
             continue
         json_text = json_texts[0]
         prompt += f'---\n{json_text}\n---\n'
         try:
             json_dict = json.loads(json_text)
         except json.JSONDecodeError as e:
+            logger.warning(f'Generation failed, invalid JSON: {e.msg}')
             prompt += f'That is not valid JSON: {e.msg}. Reply with fixed JSON only:'
             continue
         try:
             model = to_type(**json_dict)
         except ValidationError as e:
-            prompt += f'I got the following error validating that: {e.msg}. Reply with fixed JSON data only:'
+            logger.warning(f'Generation failed, JSON did not match the schema: {e}')
+            prompt += f'I got the following error validating that: {e}. Reply with fixed JSON data only:'
             continue
         return prompt, model
     raise GenerateFailure(f'failed generate, exceeded {_MAX_TRIES} tries')
