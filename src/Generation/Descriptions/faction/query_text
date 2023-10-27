@@ -1,0 +1,13 @@
+The game takes place in capital city {{capital_name}} of the medieval fantasy kingdom {{kingdom}}. The kingdom is ruled by {{ruler}}. {{ruler_personality}} {{ruler_evil}} {{governance_style}}
+
+But now, a rebellion is brewing. A hero (the player character) has emerged, and is trying to gather allies. Some factions within the kingdom might be symphathetic to this cause, while other would certainly oppose it.
+
+Here is some background information about the kingdom:
+{{background_kingdom}}
+
+And about the capital city, in which the game will take place:
+{{background_capital}}
+
+Design a faction that is present in the capital city. This faction should be {{power_level}} and {{rebellion_stance}}. Its alignment is {{alignment}}.
+---
+Faction details ({{power_level}}, {{rebellion_stance}}):

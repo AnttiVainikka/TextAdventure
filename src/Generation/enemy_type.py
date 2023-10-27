@@ -1,5 +1,5 @@
 from enum import Enum
-from Generation.generator import Generator
+from Generation.generator import llm_create
 
 class Rarity(Enum):
     """
@@ -25,7 +25,7 @@ class EnemyType:
         self.rarity = rarity
         #self.description: str # TODO: do we need a description?
 
-def generate(race: str) -> list[EnemyType]:
+def llm_create(race: str) -> list[EnemyType]:
     """
     Generate a list of enemy types for a given race.
 
@@ -47,8 +47,7 @@ def generate(race: str) -> list[EnemyType]:
     [EnemyType("Human", "Human Soldier", Rarity.Rare), ...]
     """
     l = []
-    generator = Generator("enemy_type")
-    successful, data = generator.generate(race=race)
+    success, data = llm_create('enemy_type', race=race)
     for key in data:
         if key in Rarity.__members__:
             for name in data[key]:

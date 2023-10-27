@@ -1,6 +1,8 @@
-{
-    "Common": ["Swordsman", "Archer", "Bandit"],
-    "Rare": ["Assassin", "Mage", "Necromancer"],
-    "Epic": ["Knight", "Sorcerer", "Ranger"],
-    "Legendary": ["Warlord", "Archmage", "Inquisitor"]
-}
+[
+    {
+        "Common": ["Swordsman", "Archer", "Bandit"],
+        "Rare": ["Assassin", "Mage", "Necromancer"],
+        "Epic": ["Knight", "Sorcerer", "Ranger"],
+        "Legendary": ["Warlord", "Archmage", "Inquisitor"]
+    }
+]
