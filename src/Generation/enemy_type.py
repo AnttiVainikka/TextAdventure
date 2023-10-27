@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from enum import Enum
 from Generation.generator import llm_create
 
@@ -10,6 +11,7 @@ class Rarity(Enum):
     Epic = 3,
     Legendary = 4
 
+@dataclass
 class EnemyType:
     """
     This class represents enemy types and their characteristics.
@@ -19,13 +21,11 @@ class EnemyType:
         name (str): The name of the enemy type.
         rarity (Rarity): The rarity level of the enemy type.
     """
-    def __init__(self, race: str, name: str, rarity: Rarity):
-        self.race = race
-        self.name = name
-        self.rarity = rarity
-        #self.description: str # TODO: do we need a description?
+    race: str
+    name: str
+    rarity: Rarity
 
-def llm_create(race: str) -> list[EnemyType]:
+def generate(race: str) -> list[EnemyType]:
     """
     Generate a list of enemy types for a given race.
 
@@ -47,7 +47,7 @@ def llm_create(race: str) -> list[EnemyType]:
     [EnemyType("Human", "Human Soldier", Rarity.Rare), ...]
     """
     l = []
-    success, data = llm_create('enemy_type', race=race)
+    data = llm_create('enemy_type', race=race)[0].dict()
     for key in data:
         if key in Rarity.__members__:
             for name in data[key]:
