@@ -1,0 +1,7 @@
+[
+    {
+        "Friendly": ["Human", "Elf", "Dwarf"],
+        "Neutral": ["Centaur", "Giant", "Treant"],
+        "Aggressive": ["Orc", "Goblin", "Imp"]
+    }
+]
