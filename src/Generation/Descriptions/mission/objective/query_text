@@ -1,0 +1,3 @@
+There is a {{mission_type}} mission, where the player needs to {{mission_goal}}.
+From the following description, extract the objective entity for the mission:
+{{quest_description}}

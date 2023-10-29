@@ -36,6 +36,10 @@ class Character():
             else:
                 break
 
+    @property
+    def max_hp(self) -> int:
+        return self.stats["hp"] + self.lost_hp
+
     def take_damage(self,damage):
         """ Use this to damage or heal characters. Healing done
         with negative numbers. Returns "dead" if damage is fatal.
@@ -58,3 +62,12 @@ class Character():
             self.stats["hp"] -= damage
             self.lost_hp += damage
         return True
+    
+    def heal_percent(self, percent: float):
+        heal_value = int(self.max_hp * percent)
+        self.stats["hp"] += min(self.lost_hp, heal_value)
+        self.lost_hp = max(0, self.lost_hp - heal_value)
+
+    def damage_percent(self, percent: float):
+        damage_value = int(self.max_hp * percent)
+        self.take_damage(damage_value)

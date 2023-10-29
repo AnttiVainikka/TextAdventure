@@ -15,6 +15,9 @@ for idx, scenario in enumerate(scenarios):
     print(f'Ruled by: {scenario.ruler.title} {scenario.ruler.name}')
     print(scenario.kingdom.description, '\n')
     print(scenario.ruler.governance_style, scenario.ruler.evil_deeds)
+    for region in scenario.kingdom.regions:
+        print(f'Region {region.name}')
+        print(region.description)
 
 selected = int(input('Choose the scenario: '))
 scenario = scenarios[selected]

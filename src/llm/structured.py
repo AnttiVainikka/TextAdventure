@@ -11,7 +11,7 @@ def _schema_to_prompt(json_schema: dict[str, any]) -> str:
     data = {}
     for key, details in json_schema['properties'].items():
         data[key] = details['title']
-    return json.dumps(data, indent=2)
+    return json.dumps(data, indent=2).replace("\\", "")
 
 def _examples_to_prompt(examples: list[BaseModel]) -> str:
     return '\n\n'.join([sample.model_dump_json(indent=2) for sample in examples])

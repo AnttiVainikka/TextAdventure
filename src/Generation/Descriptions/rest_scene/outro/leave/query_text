@@ -1,0 +1,6 @@
+The player is currently in {{area_name}}, where he/she found a perfect place to rest.
+The context so far is the following:
+{{area_context}}
+
+The player has decided to leave and don't spend the night here resting, rather continuing his/her journey.
+Generate a context that will be printed to player about the decision.

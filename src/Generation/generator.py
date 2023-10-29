@@ -46,7 +46,7 @@ class Generator:
     def generate(self, count: int, **kwargs) -> (bool, dict):
         query_text = self._template_query_text
         for key, value in kwargs.items():
-            query_text = query_text.replace(f"{{{{{key}}}}}", value)
+            query_text = query_text.replace(f"{{{{{key}}}}}", str(value))
         
         query_parts = query_text.split('---', maxsplit=1)
 

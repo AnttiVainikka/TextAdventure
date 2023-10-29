@@ -15,6 +15,11 @@ print('##', world.scenario.capital.name)
 print(world.scenario.capital.architecture, '\n')
 print(world.scenario.capital.history)
 
+print('## Regions')
+for region in world.scenario.kingdom.regions:
+    print('###', region.name)
+    print('####', region.description)
+
 print('## Factions')
 for faction in world.factions:
     print('###', faction.name, f'- "{faction.motto}"')

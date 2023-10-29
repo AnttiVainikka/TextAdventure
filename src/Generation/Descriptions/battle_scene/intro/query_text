@@ -1,0 +1,9 @@
+The player is on an adventure in {{region_name}}.
+{{region_description}}
+
+Within {{region_name}} the player is currently in {{area_name}}. The description of {{area_name}} is the following:
+{{area_description}}
+
+Within this area the player needs to face some {{enemy_types}}.
+Write a context in such a way, that it fits around the battle.
+This will be printed to the player so instead of using "the player" use "you".

@@ -1,0 +1,11 @@
+The player is currently in {{area_name}}.
+The context so far is the following:
+{{intro_context}}
+
+The player had to solve the following riddle within this area:
+{{riddle}}
+
+The answer to this riddle is {{riddle_answer}}.
+
+The player gave the right answer for the riddle.
+Generate a context that can be printed to the player for the good answer, and that he can continue the journey.

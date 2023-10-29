@@ -1,0 +1,10 @@
+The game takes place in the kingdom of {{kingdom_name}}.
+Within {{kingdom_name}} there is a region called {{region_name}}.
+{{region_description}}
+
+The player has the following mission in {{region_name}}: 
+{{region_mission}}
+
+To finish the mission, the player needs to go through {{number_of_areas}} areas within {{region_name}}. 
+Generate these areas with a name and a simple description.
+Consider the final task in {{region_name}}. Also consider that in the last 2 areas the player should face certain foes.

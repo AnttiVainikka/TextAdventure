@@ -1,0 +1,7 @@
+The player has found a {{equipment_type}} in {{region_name}}.
+{{region_description}}
+
+This equipment once belonged to a {{user_class}}.
+The rarity of this equipment is {{rarity}}.
+
+Generate a name and a description for this equipment. In case of a legendary equipment, generate a unique name for it.

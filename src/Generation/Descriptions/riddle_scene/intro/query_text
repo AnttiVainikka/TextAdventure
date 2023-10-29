@@ -1,0 +1,9 @@
+The player is on an adventure in {{region_name}}.
+{{region_description}}
+
+Within {{region_name}} the player is currently in {{area_name}}. The description of {{area_name}} is the following:
+{{area_description}}
+
+The player needs to solve a riddle within this area to be able to continue the journey.
+Extend or rewrite the description in such a way, that it fits to the task of solving a riddle.
+This will be printed to the player so instead of using "the player" use "you".
