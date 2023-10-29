@@ -1,0 +1,6 @@
+The player has stepped into a place, which contained a treasure chest, but the player has already looted it.
+The original context of this place was the following:
+{{context}}
+
+Based on the information that the chest has already been looted, generate a new context to this place.
+Also generate 2 choices from which the player can decide what to do. One choice to look around again and one choice to do nothing.

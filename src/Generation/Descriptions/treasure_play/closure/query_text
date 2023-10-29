@@ -1,0 +1,11 @@
+The player has stepped into a place, which contains a treasure chest.
+The context of the place is the following:
+{{context}}
+
+The player has choosen the following:
+{{choice}}
+
+The loot is the following:
+{{loot}}
+
+Based on these informations generate a closure, that can be used to leave the place.
