@@ -1,5 +1,5 @@
 from concurrent import futures
-from dataclasses import dataclass
+from dataclasses import dataclass, is_dataclass, fields
 import json
 from multiprocessing.pool import ThreadPool
 import random
@@ -7,11 +7,17 @@ import random
 from Generation.generator import llm_create
 
 @dataclass
+class Region:
+    name: str
+    description: str
+
+@dataclass
 class Kingdom:
     name: str
     geography: str
     economy: str
     description: str
+    regions: list[Region]
 
 @dataclass
 class Ruler:
@@ -66,6 +72,20 @@ def _pick_random(items: list):
     idx = random.randint(0, len(items) - 1)
     return items[idx]
 
+def _new_regions(kingdom_name: str, kingdom_description: str, number_of_regions: int = 3) -> list[Region]:
+    # Create regions for a given kingdom
+    names = llm_create('region/name', kingdom_name=kingdom_name,
+                                             kingdom_description=kingdom_description,
+                                             number_of_regions=number_of_regions)[0].region_names
+    descriptions = [
+    llm_create('region/description', kingdom_name=kingdom_name,
+                                     kingdom_description=kingdom_description,
+                                     region_name=region_name)[0].region_description 
+        for region_name in names
+    ]
+
+    return [Region(name, description) for (name, description) in zip(names, descriptions)]
+
 def _new_ruler(kingdom_name: str, kingdom_desc: str) -> Ruler:
     # Pick background, original personality and the crisis from human-written random options
     background_choice = _pick_random(ruler_backgrounds)
@@ -109,8 +129,9 @@ def _new_scenario(kingdom) -> Scenario:
                                         ruler_desc=f'{ruler.deeds} {ruler.governance_style}'
                                         )[0]
         capital = capital_future.result()[0]
+        regions = _new_regions(rewrite.name, rewrite.economy, 3)
     return Scenario(
-        Kingdom(rewrite.name, rewrite.geography, rewrite.economy, f'{rewrite.geography} {rewrite.economy}'),
+        Kingdom(rewrite.name, rewrite.geography, rewrite.economy, f'{rewrite.geography} {rewrite.economy}', regions),
         ruler,
         CapitalCity(capital.name, capital.population, capital.architecture, capital.history))
 
@@ -125,3 +146,14 @@ def new_scenarios(count: int) -> list[Scenario]:
             scenarios.append(scenario)
 
     return scenarios
+
+def from_dict(state: dict) -> Scenario:
+    return _from_dict(state, Scenario)
+
+def _from_dict(state, type):
+    if not is_dataclass(type): return state
+    real_state = {}
+    for key, value in state.items():
+        field_type = next(field for field in fields(type) if field.name == key).type
+        real_state[key] = _from_dict(value, field_type)
+    return type(**real_state)

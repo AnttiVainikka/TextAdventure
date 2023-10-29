@@ -1,0 +1,9 @@
+The player is on an adventure in {{region_name}}.
+{{region_description}}
+
+Within {{region_name}} the player is currently in {{area_name}}. The description of {{area_name}} is the following:
+{{area_description}}
+
+Within this area the player had to face some {{enemy_types}} and he successfully defeated them.
+Write an outro context that includes the battle and how the player continues his journey.
+This will be printed to the player so instead of using "the player" use "you".

@@ -1,0 +1,9 @@
+The player is on an adventure in {{region_name}}.
+{{region_description}}
+
+Within {{region_name}} the player is currently in {{area_name}}. The description of {{area_name}} is the following:
+{{area_description}}
+
+Within this area there the player has the chance to rest for the night.
+Extend or rewrite the description in such a way, that it fits around the possibility to rest.
+This will be printed to the player so instead of using "the player" use "you".

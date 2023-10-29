@@ -1,0 +1,5 @@
+The game takes place in the kingdom of {{kingdom_name}}. 
+{{kingdom_name}} has a region called {{region_name}}. The player's mission in {{region_name}} is the following:
+{{mission}}
+
+Summarize this mission into a simple quest. Consider the fact that this a {{mission_type}} mission.

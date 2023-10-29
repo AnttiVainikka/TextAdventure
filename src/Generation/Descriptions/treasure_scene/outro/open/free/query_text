@@ -1,0 +1,6 @@
+The player is currently in {{area_name}}, where he found a treasure chest.
+The context so far is the following:
+{{area_context}}
+
+The player has decided to open the chest and has looted {{item}}.
+Generate a context that will be printed to player about the looting and that the journey can be continued.

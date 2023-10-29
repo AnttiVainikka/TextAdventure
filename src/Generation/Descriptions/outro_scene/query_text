@@ -1,0 +1,10 @@
+The player was in an adventure in {{region_name}}.
+
+The player had the following mission:
+{{mission_description}}
+
+The player has successfully completed the mission. Now he is preparing to leave {{region_name}} and return to the capital, {{capital_name}}.TimeoutError
+
+Generate a context for this.
+
+When you refer to the player, use 'you' instead of 'the player'. 

@@ -1,0 +1,7 @@
+The player is currently in {{area_name}}, where he/she found a treasure chest. But this treasure chest is but a trap.
+The context so far is the following:
+{{area_context}}
+
+The player has decided to open the chest, walking into the trap with that.
+Because of the this the player takes some damage.
+Generate a context that will be printed to player about the decision and that the journey can be continued.

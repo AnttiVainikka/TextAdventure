@@ -1,0 +1,12 @@
+The player is on an adventure in {{region_name}}.
+Within {{region_name}} the player is currently in {{area_name}}. The description of {{area_name}} is the following:
+{{area_context}}
+
+The player is in {{region_name}} for the following mission:
+{{mission_quest}}
+
+The player has defeated {{boss_name}}, but it turns the boss doesn't give up so easily and gets up for a second round.
+
+Generate a context that desrcibes the happenings and that the player needs to face the boss again.
+
+This will be printed to player so instead of using "the player" use "you".

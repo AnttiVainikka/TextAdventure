@@ -1,0 +1,8 @@
+The player got the following riddle to solve:
+{{riddle}}
+
+The answer to this riddle is: {{riddle_answer}}
+
+The player answered the following: {{player_answer}}
+
+Is the player's answer correct?

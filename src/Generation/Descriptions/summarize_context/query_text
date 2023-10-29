@@ -1,0 +1,4 @@
+There is the following context so far:
+{{context}}
+
+Summarize this to at most {{number_of_characters}} characters.

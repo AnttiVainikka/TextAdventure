@@ -1,0 +1,9 @@
+The player is at the entrance of {{region}}.
+{{region_description}}
+
+The mission of the player in {{region}} is the following:
+{{mission}}
+
+Generate a context that can be printed to the player before entering {{region}}.
+
+When you refer to the player, use 'you' instead of 'the player'. 

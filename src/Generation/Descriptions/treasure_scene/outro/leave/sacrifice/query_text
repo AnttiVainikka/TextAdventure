@@ -1,0 +1,7 @@
+The player is currently in {{area_name}}, where he/she found a special treasure.
+This treasure can only be obtained if the player is willing to sacrifice a certain amount hp.
+The context so far is the following:
+{{area_context}}
+
+The player has decided to not sacrifice for the treasure.
+Generate a context that will be printed to the player about the decision and that the journey can be continued.

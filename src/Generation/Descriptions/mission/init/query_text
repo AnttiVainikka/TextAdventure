@@ -1,0 +1,7 @@
+The game takes place in the kingdom of {{kingdom_name}}.
+{{kingdom_description}}
+
+There is a region within {{kingdom_name}} called {{region_name}}.
+
+The final goal of the player is to overthrow the king. For this the player needs to complete a single, simple mission within {{region_name}}, that will help in the final task.
+This mission should be a {{mission_type}} mission, where the goal is to {{mission_goal}}. Generate this mission.

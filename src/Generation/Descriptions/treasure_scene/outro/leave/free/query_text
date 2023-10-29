@@ -1,0 +1,6 @@
+The player is currently in {{area_name}}, where he/she found a treasure chest.
+The context so far is the following:
+{{area_context}}
+
+The player has decided to leave the chest, because doesn't want to risk a trap.
+Generate a context that will be printed to player about the decision and that the journey can be continued.

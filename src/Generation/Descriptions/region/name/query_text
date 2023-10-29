@@ -1,0 +1,5 @@
+The game takes place in medieval fantasy {{kingdom_name}}.
+The description of the kingdom is the following:
+{{kingdom_description}}
+
+Generate {{number_of_regions}} different region names within this kingdom that can be explored.

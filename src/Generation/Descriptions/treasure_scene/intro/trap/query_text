@@ -1,0 +1,10 @@
+The player is on an adventure in {{region_name}}.
+{{region_description}}
+
+Within {{region_name}} the player is currently in {{area_name}}. The description of {{area_name}} is the following:
+{{area_description}}
+
+Within this region there is a treasure chest. But this treasure chest is but a trap.
+Extend or rewrite the description in such a way, that it fits around the trap.
+Try to include some hint that this is indeed a trap, so the player might found out.
+This will be printed to the player so instead of using "the player" use "you".

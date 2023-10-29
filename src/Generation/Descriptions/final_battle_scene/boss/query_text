@@ -1,0 +1,12 @@
+The player is on an adventure in {{region_name}}.
+Within {{region_name}} the player is currently in {{area_name}}. The description of {{area_name}} is the following:
+{{area_context}}
+
+The player is in {{region_name}} for the following mission:
+{{mission_quest}}
+
+This is the player's final area in {{region_name}} and to finish his mission he has to defeat a boss.
+
+Generate a name for this boss and a description.
+
+This will be printed to player so instead of using "the player" use "you".
