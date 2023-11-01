@@ -1,3 +1,11 @@
+from enum import Enum
+
+class SkillRarity(Enum):
+    Common = 1
+    Rare = 2
+    Epic = 3
+    Legendary = 4
+
 class Skill():
     def __init__(self, name :str, multiplier :float, stat :str, uses :int, description :str, ally: bool, aoe: bool):
         """
