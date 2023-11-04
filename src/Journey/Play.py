@@ -9,7 +9,7 @@ class Play(ABC):
     """
     Play represents the interaction between the player and a Scene.
 
-    Interactions are generated based on Intuitions and facilitated through Interaction objects.
+    Interactions are generated based on Circumstances and facilitated through Interaction objects.
     """
     def __init__(self, parent: "Scene"):
         """

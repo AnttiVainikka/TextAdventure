@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from Journey.Intuition import Intuitions
+    from Journey.Circumstance import Circumstances
     from Journey.Play import Play
     from Journey.Layout import Layout, Difficulty
 
@@ -9,34 +9,34 @@ class Scene(ABC):
     """
     A Scene serves as a fundamental element within the Layout, representing an intresting part or significant event within the Layout.
 
-    Scenes are comprised of Plays, the interactions between the player and the Scene, generated based on Intuitions.
+    Scenes are comprised of Plays, the interactions between the player and the Scene, generated based on Circumstances.
 
     Each Scene maintains its own history, capturing essential information about the occurrences within.
-    When a Scene is finished, these records are converted into Intuitions and spread to subsequent Scenes.
+    When a Scene is finished, these records are converted into Circumstances and spread to subsequent Scenes.
     This mechanism enriches the connections and coherence between Scenes within the Layout.
     """
-    def __init__(self, parent: "Layout", difficulty: "Difficulty", intuitions: "Intuitions"):
+    def __init__(self, parent: "Layout", difficulty: "Difficulty", circumstances: "Circumstances"):
         """
         Constructor for the Scene class.
 
         Parameters:
         - parent (Layout): The parent layout to which the Scene belongs.
         - difficulty (Difficulty): Difficulty level of the Scene.
-        - intuitions (Intuitions): The intuitions based on which the Scene will be generated.
+        - circumstances (Circumstances): The circumstances based on which the Scene will be generated.
         """
         self._parent = parent
         self._difficulty = difficulty
-        self._intuitions = intuitions
+        self._intuitions = circumstances
         self._history = []
         self._plays = []
 
     @property
-    def intuitions(self) -> "Intuitions":
+    def circumstances(self) -> "Circumstances":
         """
-        Retrieve the intuitions based on which the Scene was generated.
+        Retrieve the circumstances based on which the Scene was generated.
 
         Returns:
-        - Intuitions: The intuitions that were used to generate the Scene.
+        - Circumstances: The circumstances that were used to generate the Scene.
         """
         return self._intuitions
 

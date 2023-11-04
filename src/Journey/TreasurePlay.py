@@ -25,7 +25,7 @@ class TreasurePlay(Play):
         return self._current_interaction
     
     def _initial_interaction(self):
-        context, loot_choice, leave_choice = play_generation.generate_context(str(self._parent.intuitions))
+        context, loot_choice, leave_choice = play_generation.generate_context(str(self._parent.circumstances))
         self._choices = {TreasurePlay._CHOICE_LOOT: loot_choice,
                          TreasurePlay._CHOICE_LEAVE: leave_choice}
         return Interaction(self, context, self._choices)
@@ -42,7 +42,7 @@ class LootedTreasurePlay(TreasurePlay):
         super().__init__(parent)
 
     def _initial_interaction(self):
-        context, loot_choice, leave_choice = play_generation.generate_looted_context(str(self._parent.intuitions))
+        context, loot_choice, leave_choice = play_generation.generate_looted_context(str(self._parent.circumstances))
         self._choices = {TreasurePlay._CHOICE_LOOT: loot_choice,
                          TreasurePlay._CHOICE_LEAVE: leave_choice}
         return Interaction(self, context, self._choices)

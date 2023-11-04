@@ -1,7 +1,7 @@
 from enum import Enum
 from Journey.Scene import Scene
 from Journey.TreasureScene import TreasureScene
-from Journey.Intuition import Intuition, Intuitions
+from Journey.Circumstance import Circumstance, Circumstances
 from Generation.selection import Selector, NonRepSelector
 
 class Difficulty(Enum):
@@ -12,10 +12,10 @@ class Difficulty(Enum):
 
 class Layout:
     """
-    The Layout class represents a level of the game, composed of various scenes generated based on Intuitions.
-    Intuitions encapsulate small fragments of information about the context of the scenes, enabling descriptions such as "You are in a forest" or "You have killed xyz".
+    The Layout class represents a level of the game, composed of various scenes generated based on Circumstances.
+    Circumstances encapsulate small fragments of information about the context of the scenes, enabling descriptions such as "You are in a forest" or "You have killed xyz".
 
-    The scenes within this layout generate Intuitions upon completion, which are subsequently spread to establish tighter connections between the scenes.
+    The scenes within this layout generate Circumstances upon completion, which are subsequently spread to establish tighter connections between the scenes.
     This mechanism fosters a network of interrelated information, enhancing the coherence and continuity of the level.
     """
     _DIFFICULTY_PROBABILITIES = {
@@ -37,24 +37,24 @@ class Layout:
                  max_depth_of_intuition: int,
                  min_difficulty: Difficulty,
                  max_difficulty: Difficulty,
-                 general_intuitions: Intuitions):
+                 general_intuitions: Circumstances):
                 # TODO: Maybe some kind of context should also be added and an endgoal for the layout... I'm not entierely sure about the generation yet
         """
         Constructor for the Layout class.
 
         Parameters:
         - number_of_scenes (int): The maximum number of scenes that will be generated for this layout.
-        - max_depth_of_intuition (int): The maximum depth where an intuition can be spread to. For instance, if this value is 3 and a scene at index 5 wants to spread an intuition, that intuition can spread at most to the 8th scene.
+        - max_depth_of_intuition (int): The maximum depth where an circumstance can be spread to. For instance, if this value is 3 and a scene at index 5 wants to spread an circumstance, that circumstance can spread at most to the 8th scene.
         - min_difficulty (Difficulty): The minimum difficulty of any scene that will be generated.
         - max_difficulty (Difficulty): The maximum difficulty of any scene that will be generated.
-        - general_intuitions (Intuitions): Intuitions applied to every scene in this layout. For example, this can contain location-related intuitions.
+        - general_intuitions (Circumstances): Circumstances applied to every scene in this layout. For example, this can contain location-related circumstances.
         """
         self._number_of_finished_scenes = 0
         self._max_depth_of_intuition = max_depth_of_intuition
         self._scenes: list[Scene] = [None] * number_of_scenes
         
-        # The general intuition is added to every scene
-        self._intuitions_for_scenes = [[intuition for intuition in general_intuitions]] * number_of_scenes
+        # The general circumstance is added to every scene
+        self._intuitions_for_scenes = [[circumstance for circumstance in general_intuitions]] * number_of_scenes
 
         # Init difficulty selector
         if min_difficulty.value < max_difficulty.value:
@@ -141,25 +141,25 @@ class Layout:
 
         return None
 
-    def spread_intuition(self, scene_index: int, intuition: Intuition, count: int = 1) -> None:
+    def spread_intuition(self, scene_index: int, circumstance: Circumstance, count: int = 1) -> None:
         """
-        Spread the given intuition that originates from the specified scene_index. The count parameter determines the maximum number of scenes
-        to which this intuition should be propagated. The depth of the spread is regulated by the object's max_depth_of_intuition.
+        Spread the given circumstance that originates from the specified scene_index. The count parameter determines the maximum number of scenes
+        to which this circumstance should be propagated. The depth of the spread is regulated by the object's max_depth_of_intuition.
         
         Parameters:
-        - scene_index (int): The index identifying the scene where the intuition originates.
-        - intuition (Intuition): The intuition object to be spread among scenes.
-        - count (int): The maximum number of scenes to which the intuition will be propagated. Defaults to 1.
+        - scene_index (int): The index identifying the scene where the circumstance originates.
+        - circumstance (Circumstance): The circumstance object to be spread among scenes.
+        - count (int): The maximum number of scenes to which the circumstance will be propagated. Defaults to 1.
 
         Returns:
         - None
         """
-        # Obtain all possible indices of scenes where intuition can be spread to
+        # Obtain all possible indices of scenes where circumstance can be spread to
         indices = list(range(scene_index + 1, max(len(self._scenes, scene_index + self._max_depth_of_intuition))))
 
-        # Sort them by their number of intuitions in an increasing order
+        # Sort them by their number of circumstances in an increasing order
         indices.sort(key=lambda x: len(self._intuitions_for_scenes[x]))
 
         for i in range(min(count, len(indices))):
-            self._intuitions_for_scenes[indices[i]].append(intuition)
+            self._intuitions_for_scenes[indices[i]].append(circumstance)
 

@@ -1,13 +1,13 @@
 from Journey.Scene import Scene
 from Journey.TreasurePlay import TreasurePlay, LootedTreasurePlay
-from Journey.Intuition import Intuitions
+from Journey.Circumstance import Circumstances
 
 class TreasureScene(Scene):
     _DEFAULT_PLAY = 0
     _LOOTED_PLAY = 1
 
-    def __init__(self, parent, difficulty, intuitions: Intuitions):
-        super().__init__(parent, difficulty, intuitions)
+    def __init__(self, parent, difficulty, circumstances: Circumstances):
+        super().__init__(parent, difficulty, circumstances)
         self._possible_loot = "Rusty Sword" # TODO: generate a loot (probably based on scene difficulty)
         self._is_looted = False
         self._plays = [TreasurePlay(self), LootedTreasurePlay(self)]
