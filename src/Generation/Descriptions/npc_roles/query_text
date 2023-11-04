@@ -1,0 +1,9 @@
+The game takes place in capital city {{capital_name}} of the medieval fantasy kingdom {{kingdom}}. The kingdom is ruled by {{ruler}}. {{ruler_personality}} {{ruler_evil}} {{governance_style}}
+
+But now, a rebellion is brewing. A hero (the player character) has emerged, and is trying to gather allies.
+
+The faction {{faction}} could by a potential ally or an enemy. {{faction_desc}}
+
+The faction has a leader, but what other roles could its members fullfil? Generate a list of 10 other roles in {{faction}}.
+---
+List of roles:

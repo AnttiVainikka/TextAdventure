@@ -1,0 +1,6 @@
+The game takes place in a medieval fantasy world. As part of world generation,
+various places, people and things need to be named.
+
+Generate 10 names for members of {{faction}}. {{faction_desc}} Do not include titles of characters in descriptions, they will be generated later.
+---
+List of names:
