@@ -1,8 +1,8 @@
 from faction import Faction
-from Characters.equipment import Equipment
+from Characters.equipment import Equipment, EquipmentType
 
 test_reward = Equipment(
-  type = "Armour",
+  type= EquipmentType.Weapon,
   stats = [3, "Heavy"],
   description = "A heavy breastplate"
 )
