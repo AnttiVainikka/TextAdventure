@@ -13,7 +13,7 @@ cohere = "^4.27"
 openai = "^0.28.1"
 tiktoken = "^0.5.1"
 pydantic = "^2.4.2"
-
+numpy = "^1.26.1"
 
 [build-system]
 requires = ["poetry-core"]
