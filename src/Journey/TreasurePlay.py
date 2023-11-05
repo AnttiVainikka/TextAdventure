@@ -1,7 +1,7 @@
 from enum import Enum
 from Journey.Play import Play
 from Generation import treasure_play as play_generation
-from Journey.Interaction import Interaction
+from Journey.Interaction import QSAInteraction
 
 class TreasurePlay(Play):
     _LEAVING_LOOT_TEXT = "Nothing, because the player is leaving"
@@ -13,7 +13,7 @@ class TreasurePlay(Play):
         self._choices = {}
         self._current_interaction = None
 
-    def _generate_next_interaction(self) -> Interaction:
+    def _generate_next_interaction(self) -> QSAInteraction:
         if self._current_interaction is None:
             self._current_interaction = self._initial_interaction()
         else:
@@ -28,12 +28,12 @@ class TreasurePlay(Play):
         context, loot_choice, leave_choice = play_generation.generate_context(str(self._parent.circumstances))
         self._choices = {TreasurePlay._CHOICE_LOOT: loot_choice,
                          TreasurePlay._CHOICE_LEAVE: leave_choice}
-        return Interaction(self, context, self._choices)
+        return QSAInteraction(self, context, self._choices)
 
     def _closure_interaction(self, answer: int):
         loot = TreasurePlay._LEAVING_LOOT_TEXT if answer == TreasurePlay._CHOICE_LEAVE else self._parent.possible_loot
         closure = play_generation.generate_closure(self._current_interaction.query, self._choices[answer], loot)
-        return Interaction(self, closure, None)
+        return QSAInteraction(self, closure, None)
 
 class LootedTreasurePlay(TreasurePlay):
     _ALREADY_LOOTED_LOOT_TEXT = "Nothing, because there is only one chest and it has already been looted"
@@ -45,9 +45,9 @@ class LootedTreasurePlay(TreasurePlay):
         context, loot_choice, leave_choice = play_generation.generate_looted_context(str(self._parent.circumstances))
         self._choices = {TreasurePlay._CHOICE_LOOT: loot_choice,
                          TreasurePlay._CHOICE_LEAVE: leave_choice}
-        return Interaction(self, context, self._choices)
+        return QSAInteraction(self, context, self._choices)
 
     def _closure_interaction(self, answer: int):
         loot = LootedTreasurePlay._ALREADY_LOOTED_LOOT_TEXT if answer == TreasurePlay._CHOICE_LEAVE else TreasurePlay._LEAVING_LOOT_TEXT
         closure = play_generation.generate_closure(self._current_interaction.query, self._choices[answer], loot)
-        return Interaction(self, closure, None)
+        return QSAInteraction(self, closure, None)
