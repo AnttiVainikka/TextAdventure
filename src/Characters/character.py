@@ -1,4 +1,4 @@
-from Characters.equipment import Equipment
+from Characters.equipment import Equipment, EquipmentType
 #TODO Make function for returning a summary of the character and their equipment and skills
 #This would help in checking what the randomly generated parameters are and could be implemented
 #as a scan option to battles to check the enemies
@@ -12,8 +12,8 @@ class Character():
         self.level = 1
         self.exp = 0
         self.skills = []
-        self.weapon = Equipment("weapon",[0,0],"Has to have some weapon to avoid errors")
-        self.armour = Equipment("armour",[0,0],"Has to have some armour to avoid errors")
+        self.weapon = Equipment(EquipmentType.Weapon)
+        self.armour = Equipment(EquipmentType.Armour)
         self.description = description
         self.alive = True
         self.lost_hp = 0
