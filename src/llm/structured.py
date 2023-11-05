@@ -1,3 +1,4 @@
+from concurrent import futures
 import json
 from typing import Type, TypeVar
 from pydantic import BaseModel, ValidationError
@@ -34,12 +35,19 @@ Generate JSON that includes the requested fields and nothing else!
 
     return prompt
 
-_MAX_TRIES = 2
+_MAX_TRIES = 3
 _JSON_PATTERN = regex.compile(r'\{(?:[^{}]|(?R))*\}')
+
+_executor = futures.ThreadPoolExecutor()
 
 def gen_sample(prompt: str, to_type: type[T]) -> T:
     for _ in range(_MAX_TRIES):
-        result = connector.complete(prompt, {'max_tokens': 500})[0]
+        future = _executor.submit(connector.complete, prompt, {'max_tokens': 750})
+        try:
+            result = future.result(timeout=60)[0]
+        except TimeoutError:
+            logger.warn('LLM timeout encountered')
+            continue
         json_texts = _JSON_PATTERN.findall(result)
         if len(json_texts) == 0:
             # Just retry without editing the prompt
