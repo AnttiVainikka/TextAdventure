@@ -69,24 +69,22 @@ def create_character(name :str, description: str, type :str, level: int, rarity:
     """
     #TODO if we want to create more types for characters, it could be good to make a class for types and have its
     # parameters include the necessary stats to prevent the need for long if -> elif patches of code.
-    #TODO based on preliminary testing the scaling could use some work since some randomly created characters
-    #are doing ridiculous damage while some do only 1
     scaling = [0,1.01,1.025,1.04,1.06] # 1.01 for common enemies, 1.025 for rare and so on
     stats = {}
 
     #Randomly generate a starting value for each stat based on type
     if type == "warrior": # HP > atk > magic
-        stats["hp"] = randint(25,40)
-        stats["atk"] = randint(4,10)
-        stats["magic"] = randint(1,5)
+        stats["hp"] = randint(35,40)
+        stats["atk"] = randint(8,10)
+        stats["magic"] = randint(1,3)
     elif type == "rogue": # atk > HP = magic
-        stats["hp"] = randint(15,30)
-        stats["atk"] = randint(7,14)
-        stats["magic"] = randint(3,8)
+        stats["hp"] = randint(24,30)
+        stats["atk"] = randint(12,15)
+        stats["magic"] = randint(5,8)
     else: #mage   magic >> atk = HP
-        stats["hp"] = randint(6,24)
-        stats["atk"] = randint(1,6)
-        stats["magic"] = randint(9,18)
+        stats["hp"] = randint(18,24)
+        stats["atk"] = randint(2,5)
+        stats["magic"] = randint(13,18)
 
     #Assign multipliers based on scaling
     multipliers = {}
@@ -115,24 +113,23 @@ def create_character(name :str, description: str, type :str, level: int, rarity:
         character.skills.append(create_skill(type,rarity-1))
     return character
 
-
 def create_equipment(description :str, type: str, level: int, rarity: int):
     """ Takes description, type, level and rarity of the character the equipment is created for
     as parameters and returns a list of [weapon,armour] """
     weapon_desc = "todo"
     armour_desc = "todo"
     # TODO generate the description for the equipment with LLM, give description, type, level and rarity of character as context
-    damage = randint(1,5) * 0.2 * rarity * level 
-    defense = randint(1,5) * 0.2 * rarity * level
+    damage = [2.0, 2.5, 3.0, 3.5, 4.0][randint(0,4)] * 0.2 * rarity * level
+    defense = [2.0, 2.5, 3.0, 3.5, 4.0][randint(0,4)] * 0.2 * rarity * level
     if type == "warrior":
-        wstats = [int(damage*randint(8,12)*0.1),int(damage*randint(1,12)*0.1)]
-        astats = [int(defense*randint(8,12)*0.1),int(defense*randint(1,12)*0.1)]
+        wstats = [int(damage*randint(8,12)*0.1),int(damage*randint(6,10)*0.1)]
+        astats = [int(defense*randint(8,12)*0.1),int(defense*randint(12,15)*0.1)]
     elif type == "rogue":
-        wstats = [int(damage*randint(10,14)*0.1),int(damage*randint(6,12)*0.1)]
-        astats = [int(defense*randint(10,14)*0.1),int(defense*randint(6,12)*0.1)]
+        wstats = [int(damage*randint(10,14)*0.1),int(damage*randint(12,15)*0.1)]
+        astats = [int(defense*randint(10,14)*0.1),int(defense*randint(6,10)*0.1)]
     else: #mage
-        wstats = [damage*randint(1,12)*0.1,damage*randint(8,16)*0.1]
-        astats = [defense*randint(1,12)*0.1,defense*randint(8,16)*0.1]
+        wstats = [damage*randint(1,12)*0.1,damage*randint(14,18)*0.1]
+        astats = [defense*randint(1,12)*0.1,defense*randint(4,8)*0.1]
     weapon = Equipment("weapon",wstats,weapon_desc)
     armour = Equipment("armour",astats,armour_desc)
     return [weapon,armour]
@@ -144,8 +141,8 @@ def create_skill(type: str, rarity: int):
 
     Returns: Skill object 
     """
-    # Makes the skill hit every target with 1 in 3 chance
-    if randint(1,3) == 1:
+    # Makes the skill hit every target with 1 in 4 chance
+    if randint(1,4) == 1:
         aoe = True
     else:
         aoe = False
@@ -176,17 +173,19 @@ def create_skill(type: str, rarity: int):
         else:
             stat = "magic"
 
-    multiplier = 0.1 * randint(1,10) * rarity + 1
+    multiplier = 0.1 * [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0][randint(0,6)] * rarity + 1
     if ally:
-        multiplier *= -0.8
+        multiplier *= -0.5
     if aoe:
         multiplier *= 0.5
     uses = randint(5,10)-rarity
+    if aoe:
+        aoe_desc="All"
+    else:
+        aoe_desc="Single"
+    name = f"{stat} {round(multiplier,1)} {aoe_desc}"
+    description = "todo"
+    # TODO generate name and description based on type, rarity, stat, aoe and ally
 
-    name, description = generate_skill(user_class=type,
-                                       skill_type="Heal" if ally else "Damage",
-                                       skill_nature="Physical" if stat == "atk" else "Magic",
-                                       skill_rarity=SkillRarity(rarity).name,
-                                       skill_target="AoE" if aoe else "Single")
-    
     return Skill(name,multiplier,stat,uses,description,ally,aoe)
+
