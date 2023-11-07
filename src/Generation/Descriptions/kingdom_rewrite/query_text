@@ -1,0 +1,10 @@
+The game takes place in medieval fantasy kingdom.
+
+Kingdom details:
+{{kingdom}}
+
+Update/rewrite these to account for the fact that the kingdom is currently ruled by a tyrant {{ruler_title}} {{ruler_name}}.
+
+{{ruler_desc}}
+---
+Updated kingdom details:

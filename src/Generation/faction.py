@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
+import functools
+from multiprocessing.pool import ThreadPool
 from Generation.generator import llm_create
 from Generation.npc import Character, create_npcs
 from Generation.scenario import Scenario
@@ -42,6 +44,8 @@ def _create_faction(scenario: Scenario, power: int, stance: InitialStance, align
         power_level = 'a significant power within the capital'
     elif power < 100:
         power_level = 'one of the most important powers in kingdom'
+    else:
+        power_level = 'the most significant military power in the kingdom'
 
     results = llm_create('faction', count,
                capital_name=scenario.capital.name,
@@ -68,26 +72,27 @@ def _create_faction(scenario: Scenario, power: int, stance: InitialStance, align
 
 
 def create_factions(scenario: Scenario) -> list[Faction]:
+    templates = [
+        # Create a few friendly, but not very powerful factions
+        (5, InitialStance.FRIENDLY, Alignment.CHAOTIC_GOOD),
+        (20, InitialStance.FRIENDLY, Alignment.CHAOTIC_EVIL),
+        # Create the neutral factions
+        (15, InitialStance.NEUTRAL, Alignment.LAWFUL_GOOD),
+        (20, InitialStance.NEUTRAL, Alignment.CHAOTIC_NEUTRAL),
+        (25, InitialStance.NEUTRAL, Alignment.NEUTRAL_EVIL),
+        # And some potential enemies
+        (30, InitialStance.SUSPICIOUS, Alignment.LAWFUL_NEUTRAL),
+        (40, InitialStance.SUSPICIOUS, Alignment.NEUTRAL),
+        # And very likely enemies
+        (70, InitialStance.HOSTILE, Alignment.NEUTRAL_EVIL),
+        (125, InitialStance.HOSTILE, Alignment.LAWFUL_EVIL)
+    ]
+
+    create_func = functools.partial(_create_faction, scenario)
+
     factions = []
-
-    # Create a few friendly, but not very powerful factions
-    factions.extend(_create_faction(scenario, 5, InitialStance.FRIENDLY, Alignment.CHAOTIC_GOOD, 1))
-    # factions.extend(_create_faction(scenario, 15, InitialStance.FRIENDLY, Alignment.NEUTRAL_GOOD, 2))
-    # factions.extend(_create_faction(scenario, 20, InitialStance.FRIENDLY, Alignment.CHAOTIC_EVIL))
-
-    # # Create the neutral factions
-    # factions.extend(_create_faction(scenario, 15, InitialStance.NEUTRAL, Alignment.LAWFUL_GOOD))
-    # factions.extend(_create_faction(scenario, 20, InitialStance.NEUTRAL, Alignment.CHAOTIC_NEUTRAL, 2))
-    # factions.extend(_create_faction(scenario, 25, InitialStance.NEUTRAL, Alignment.NEUTRAL_EVIL, 2))
-
-    # # And some potential enemies
-    # factions.extend(_create_faction(scenario, 30, InitialStance.SUSPICIOUS, Alignment.LAWFUL_NEUTRAL, 2))
-    # factions.extend(_create_faction(scenario, 40, InitialStance.SUSPICIOUS, Alignment.NEUTRAL))
-    # factions.extend(_create_faction(scenario, 55, InitialStance.SUSPICIOUS, Alignment.NEUTRAL_EVIL))
-
-    # # And very likely enemies
-    # factions.extend(_create_faction(scenario, 15, InitialStance.HOSTILE, Alignment.LAWFUL_NEUTRAL, 2))
-    # factions.extend(_create_faction(scenario, 70, InitialStance.HOSTILE, Alignment.NEUTRAL_EVIL))
-    # factions.extend(_create_faction(scenario, 125, InitialStance.HOSTILE, Alignment.LAWFUL_EVIL))
+    with ThreadPool() as pool:
+        for faction_list in pool.starmap(create_func, templates):
+            factions.extend(faction_list)
 
     return factions

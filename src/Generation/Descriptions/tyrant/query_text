@@ -1,6 +1,10 @@
 The game takes place in medieval fantasy {{kingdom}}, that can be briefly described as:
-"{{details}}"
+{{details}}
 
-The premise of game is that this kingdom's ruler {{ruler}} is actually a tyrant. But what heinous deeds have they done?
+The kingdom is ruled by a tyrant {{title}} {{name}}.
+
+{{backstory}}
+
+It only went downhill from there. But how exactly did that happen? And what king of person {{title}} {{name}} actually is?
 ---
-Details of the ruler:
+Details of the tyrant:
