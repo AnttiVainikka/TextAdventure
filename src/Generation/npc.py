@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 @dataclass
 class Character:
     name: str
+    role: str
     personality: str
     background: str
     secrets: str
@@ -51,13 +52,13 @@ def _create_npc(name: str, role: str, scenario: 'Scenario', faction: 'Faction') 
                npc_name=name,
                npc_role=role
     )[0]
-    return Character(name, result.personality, result.background, result.secrets)
+    return Character(name, role, result.personality, result.background, result.secrets)
 
 def _take_random(items: list):
     idx = random.randint(0, len(items) - 1)
     return items.pop(idx)
 
-def create_npcs(scenario: 'Scenario', faction: 'Faction', count=5) -> list[Character]:
+def create_npcs(scenario: 'Scenario', faction: 'Faction', count=3) -> list[Character]:
     if count < 1:
         return []
 

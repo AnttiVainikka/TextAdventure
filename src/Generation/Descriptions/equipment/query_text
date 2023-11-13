@@ -1,0 +1,6 @@
+Generate a name and a description for an equipment, based on the following informations.
+This equipment is a {{equipment_type}}.
+The user of this equipment is {{user}}.
+This is a {{rarity}} equipment. 
+
+In case of a legendary equipment, generate a unique name for it.
