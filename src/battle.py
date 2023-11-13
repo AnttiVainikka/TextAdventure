@@ -1,5 +1,6 @@
 from random import randint
 from time import sleep
+from Characters.equipment import EquipmentType
 def battle(players :list,enemies :list):
     """
     players: list consisting of player character and possible allies
@@ -21,6 +22,14 @@ def battle(players :list,enemies :list):
                     for player in players:
                         if player.alive:
                             player.gain_exp(enemy.given_exp)
+                while True:
+                    loot = input("Loot enemies? (yes/no)")
+                    if loot == "yes" or loot == "1":
+                        for enemy in enemies:
+                            players[0].inventory.extend([enemy.weapon,enemy.armour])
+                        break
+                    elif loot == "no" or loot == "0":
+                        break
                 return "victory"
             if player.alive:
                 #Print the names, level and hp of all combatants at the start of every turn
@@ -32,11 +41,41 @@ def battle(players :list,enemies :list):
                     print(f"{e.name}: LVL {e.level}  HP: {e.stats['hp']}/{e.stats['hp']+e.lost_hp}")
                 print("\n")
                 while True: #breaks once player does an action successfully
-                    print("Attack:  1\nSkill:  2\nRun:  3\n")
-                    #use item can be implemented later if we want
+                    print("1:  Attack\n2:  Skill\n3:  Run\n4:  View\n")
+                    #use item can be implemented later if we want to view, now only equipping is implemented
                     action = input(f"Choose action for {player.name}:  ")
-                    while action not in ["1","2","3"]:
-                        action = input("Please type 1, 2 or 3:  ")
+                    while action not in ["1","2","3","4"]:
+                        action = input("Please type 1, 2, 3 or 4:  ")
+                    if action == "4":
+                        counter = 1
+                        print("\n")
+                        for p in players:
+                            print(f"{counter}:   {p.name} HP:{p.stats['hp']}/{p.stats['hp']+p.lost_hp}")
+                            counter += 1
+                        for e in enemies:
+                            print(f"{counter}:   {e.name} HP:{e.stats['hp']}/{e.stats['hp']+e.lost_hp}")
+                            counter += 1
+                        print(f"Back:  {counter}")
+                        try:
+                            while True:
+                                target = int(input("Choose target:  "))
+                                if target not in range(1,counter+1):
+                                    print("Invalid target")
+                                else:
+                                    break
+                        except ValueError:
+                            print("Invalid input\n")
+                            continue
+                        if target == counter: #back was chosen
+                            continue
+                        if target > len(players):
+                            target = enemies[target-1-len(players)]
+                        else:
+                            target = players[target-1]
+                        if view_character(target,players[0].inventory):
+                            break
+                        else:
+                            continue
                     if action == "3":
                         for enemy in enemies:
                             for player in players:
@@ -263,3 +302,97 @@ def battle(players :list,enemies :list):
                     print(f"{target.name} took {damage} damage")
                 if len(players) - dead_players <= 0:
                     return "defeat"
+
+def view_character(character, inventory = False):
+    """Returns all information regarding a character. If viewing a party member, give inventory of
+    player character as inventory. I presume we want to have a shared inventory between party members
+    which can be achieved by having everything in player characters inventory.
+
+    Creates a loop which is broken by typing 1."""
+    print(f"\n{character.name}\nLvl: {character.level}   Class: {character.type}")
+    print(f"\n{character.description}\n")
+    for stat in ["HP","Atk","Magic"]:
+        if stat == "HP":
+            hp = character.stats["hp"]
+            print(f"{stat}: {hp}/{hp+character.lost_hp}")
+        else:
+            print(f"{stat}: {character.stats[stat.lower()]}")
+    weapon = character.weapon
+    print(f"\nWeapon\n\n{weapon.name}\nAttack: {weapon.stats[0]}  Magic: {weapon.stats[1]}\n{weapon.description}")
+    armour = character.armour
+    print(f"\nArmour\n\n{armour.name}\nDefense: {armour.stats[0]}  Magic Defense: {armour.stats[1]}\n{armour.description}")
+    print("\nSkills")
+    for skill in character.skills:
+        print(f"\n{skill.name}  {skill.uses_remaining}/{skill.uses}\n\n{skill.description}\n")
+        if skill.aoe:
+            aoe = "all targets"
+        else:
+            aoe = "Single target"
+        if skill.multiplier < 0:
+            print(f"Heals {aoe} with multiplier {-skill.multiplier}. Uses {skill.stat}")
+        else:
+            print(f"Deals damage to {aoe} with multiplier {skill.multiplier}. Uses {skill.stat}")
+    print("\n")
+    if inventory:
+        action_taken = False # is a item used/equipped
+        while True:
+            action = input("Type 1 to exit view. Type 2 to view inventory:  ")
+            if action == "1":
+                return False
+            elif action == "2":
+                while True:
+                    if view_inventory(inventory,character):
+                        action_taken = True
+                    break
+                if view_character(character,inventory) or action_taken:
+                    return True
+                else:
+                    return False
+    else:
+        while True:
+            action = input("Type 1 to exit view.:  ")
+            if action == "1":
+                return False
+
+def view_inventory(inventory :list, character):
+    """
+    inventory: inventory to be viewed
+    character: character to equip or use items from the inventory
+
+    Called from view character
+    """
+    weapon = character.weapon
+    armour = character.armour
+    print("Inventory")
+    counter = 0
+    for item in inventory:
+        counter += 1
+        #TODO Once we have an UI that supports it, inventory items should be color coded (gray: common, rare: blue and so on)
+        print(f"{counter}:  {item.name}")
+    while True:
+        action = input("Type 0 to exit inventory. Type number of item to use it:  ")
+        if action == "0":
+            return False
+        else:
+            try:
+                action = int(action)
+                item = inventory[action-1]
+                if item.type == EquipmentType.Weapon:
+                    #TODO Make it clearer the number in brackets is the difference to current equipment
+                    print(f"\nWeapon\n{item.name}\nAttack: {item.stats[0]}({item.stats[0]-weapon.stats[0]})  Magic: {item.stats[1]}({item.stats[1]-weapon.stats[1]})\n{item.description}")
+                else:
+                    print(f"\nArmour\n{item.name}\nDefense: {item.stats[0]}({item.stats[0]-armour.stats[0]})  Magic Defense: {item.stats[1]}({item.stats[1]-armour.stats[1]})\n{item.description}")
+                choice = input("Type 1 to equip, 2 to drop, 3 to return:  ")
+                if choice == "1":
+                    inventory.pop(action-1)
+                    if item.type == EquipmentType.Weapon:
+                        character.weapon = item
+                        inventory.append(weapon)
+                    else:
+                        character.armour = item
+                        inventory.append(armour)
+                elif choice == "2":
+                    inventory.pop(action-1)
+                return True
+            except:
+                print("Invalid input")

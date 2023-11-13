@@ -1,9 +1,6 @@
 from Characters.equipment import Equipment, EquipmentType
-#TODO Make function for returning a summary of the character and their equipment and skills
-#This would help in checking what the randomly generated parameters are and could be implemented
-#as a scan option to battles to check the enemies
 class Character():
-    def __init__(self, kind :str, name :str, stats :dict, multipliers :int, description :str):
+    def __init__(self, kind :str, name :str, stats :dict, multipliers :int, description :str, type :str = "Warrior"):
         """ Used for both playable and npc characters. """
         self.kind = kind
         self.name = name
@@ -19,6 +16,8 @@ class Character():
         self.lost_hp = 0
         self.given_exp = 0 # how much exp enemy gives when defeated
         self.enemy = False #change to True if npc turns hostile to player
+        self.type = type
+        self.inventory = []
         # self.skillset could be implemented to have character learn specific skills
         # at specific levels
     

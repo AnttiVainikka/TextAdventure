@@ -95,7 +95,7 @@ def create_character(name :str, description: str, type :str, level: int, rarity:
 
     #Create character, level them up and give them equipment
     kind = "?" #what does kind mean/do?
-    character = Character(kind,name,stats,multipliers,description)
+    character = Character(kind,name,stats,multipliers,description,type.capitalize())
     character.given_exp = level * 5
     for exp in range (1,level):
         character.gain_exp(exp*10)
@@ -117,8 +117,8 @@ def create_character(name :str, description: str, type :str, level: int, rarity:
 def create_equipment(user_class: str, user_race: str, user_name: str, level: int, rarity: int) -> (Equipment, Equipment):
     """ Takes description, type, level and rarity of the character the equipment is created for
     as parameters and returns a list of [weapon,armour] """
-    damage = [2.0, 2.5, 3.0, 3.5, 4.0][randint(0,4)] * 0.2 * rarity * level
-    defense = [2.0, 2.5, 3.0, 3.5, 4.0][randint(0,4)] * 0.2 * rarity * level
+    damage = [2.0, 2.5, 3.0, 3.5, 4.0][randint(0,4)] * 0.2 * level + (rarity*level*0.4)
+    defense = [2.0, 2.5, 3.0, 3.5, 4.0][randint(0,4)] * 0.2 * level + (rarity*level*0.4)
     if user_class == "warrior":
         wstats = [int(damage*randint(8,12)*0.1),int(damage*randint(1,12)*0.1)]
         astats = [int(defense*randint(8,12)*0.1),int(defense*randint(1,12)*0.1)]
@@ -126,8 +126,8 @@ def create_equipment(user_class: str, user_race: str, user_name: str, level: int
         wstats = [int(damage*randint(10,14)*0.1),int(damage*randint(6,12)*0.1)]
         astats = [int(defense*randint(10,14)*0.1),int(defense*randint(6,12)*0.1)]
     else: #mage
-        wstats = [damage*randint(1,12)*0.1,damage*randint(8,16)*0.1]
-        astats = [defense*randint(1,12)*0.1,defense*randint(8,16)*0.1]
+        wstats = [int(damage*randint(1,12)*0.1),int(damage*randint(8,16)*0.1)]
+        astats = [int(defense*randint(1,12)*0.1),int(defense*randint(8,16)*0.1)]
 
     weapon = Equipment(EquipmentType.Weapon, EquipmentRarity(rarity), wstats)
     armour = Equipment(EquipmentType.Armour, EquipmentRarity(rarity), astats)
@@ -196,5 +196,5 @@ def create_skill(type: str, rarity: int):
                                       skill_rarity=SkillRarity(rarity).name,
                                       skill_target="AoE" if aoe else "Single")
 
-    return Skill(name,multiplier,stat,uses,description,ally,aoe)
+    return Skill(name,round(multiplier,1),stat,uses,description,ally,aoe)
 
