@@ -188,10 +188,10 @@ def create_skill(type: str, rarity: int):
     # TODO generate name and description based on type, rarity, stat, aoe and ally
 
     name, description = generate_skill(user_class=type,
-                                       skill_type="Heal" if ally else "Damage",
-                                       skill_nature="Physical" if stat == "atk" else "Magic",
-                                       skill_rarity=SkillRarity(rarity).name,
-                                       skill_target="AoE" if aoe else "Single")
+                                      skill_type="Heal" if ally else "Damage",
+                                      skill_nature="Physical" if stat == "atk" else "Magic",
+                                      skill_rarity=SkillRarity(rarity).name,
+                                      skill_target="AoE" if aoe else "Single")
 
     return Skill(name,multiplier,stat,uses,description,ally,aoe)
 
