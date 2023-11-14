@@ -194,7 +194,7 @@ elif _model_name == 'command-nightly':
 elif _model_name == 'gpt-3.5':
     connector = OpenAIConnector('gpt-3.5-turbo-instruct', chat_model=False)
 elif _model_name == 'gpt-3.5-chat':
-    connector = OpenAIConnector('gpt-3.5-turbo', chat_model=True)
+    connector = OpenAIConnector('gpt-3.5-turbo-1106', chat_model=True)
 elif _model_name == 'gpt-4':
     # EXPENSIVE, DO NOT USE
     connector = OpenAIConnector('gpt-4', chat_model=True)
