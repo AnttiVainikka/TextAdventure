@@ -42,7 +42,7 @@ _executor = futures.ThreadPoolExecutor()
 
 def gen_sample(prompt: str, to_type: type[T]) -> T:
     for _ in range(_MAX_TRIES):
-        future = _executor.submit(connector.complete, prompt, {'max_tokens': 750})
+        future = _executor.submit(connector.complete, prompt, {'max_tokens': 750, 'json_mode': True})
         try:
             result = future.result(timeout=60)[0]
         except TimeoutError:

@@ -31,9 +31,11 @@ class Faction:
     beliefs: str
     goals: str
     needs: str
+    alignment: Alignment
     power: str
     power_value: int
     npcs: list[Character]
+    favor: int
 
 def _create_faction(scenario: Scenario, power: int, stance: InitialStance, alignment: Alignment, count=1):
     if power < 10:
@@ -46,6 +48,16 @@ def _create_faction(scenario: Scenario, power: int, stance: InitialStance, align
         power_level = 'one of the most important powers in kingdom'
     else:
         power_level = 'the most significant military power in the kingdom'
+
+    match stance:
+        case InitialStance.FRIENDLY:
+            favor = 100
+        case InitialStance.NEUTRAL:
+            favor = 0
+        case InitialStance.SUSPICIOUS:
+            favor = -50
+        case InitialStance.HOSTILE:
+            favor = -100
 
     results = llm_create('faction', count,
                capital_name=scenario.capital.name,
@@ -65,7 +77,7 @@ def _create_faction(scenario: Scenario, power: int, stance: InitialStance, align
         npcs = []
         faction = Faction(name=result.name, overview=result.overview, motto=result.motto,
                                 beliefs=result.beliefs, goals=result.goals, needs=result.needs,
-                                power=power_level, power_value=power, npcs=npcs)
+                                alignment=alignment, power=power_level, power_value=power, npcs=npcs, favor=favor)
         factions.append(faction)
         npcs.extend(create_npcs(scenario, faction))
     return factions

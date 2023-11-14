@@ -49,6 +49,9 @@ class LlmOptions(TypedDict):
     # Stop sequences are not included in generated text
     stop_sequences: list[str]
 
+    # Request that the model generates only JSON (no-op for models that don't support this)
+    json_mode: bool
+
 EMPTY_OPTIONS: LlmOptions = {}
 
 _DEFAULT_OPTIONS: LlmOptions = {
@@ -58,7 +61,8 @@ _DEFAULT_OPTIONS: LlmOptions = {
     'logit_bias': LogitBias({}),
     'max_tokens': 300,
     'generations': 1,
-    'stop_sequences': []
+    'stop_sequences': [],
+    'json_mode': False
 }
 
 def _fill_options(options: LlmOptions) -> LlmOptions:
@@ -143,11 +147,13 @@ class CohereConnector(LlmConnector):
         return self._client.tokenize(model=self._model, text=text).tokens
 
 class OpenAIConnector(LlmConnector):
+    _client: openai.OpenAI
     _model: str
     _encoding: tiktoken.Encoding
 
     def __init__(self, model: str, chat_model: bool):
         super().__init__(chat_model=chat_model)
+        self._client = openai.OpenAI()
         self._model = model
         self._encoding = tiktoken.encoding_for_model(model)
     
@@ -155,7 +161,7 @@ class OpenAIConnector(LlmConnector):
     def complete(self, prompt: str, options: LlmOptions) -> list[str]:
         options = _fill_options(options)
         if self.chat_model:
-            results = openai.ChatCompletion.create(
+            results = self._client.chat.completions.create(
                 model=self._model,
                 messages=_to_chat_prompt(prompt),
                 temperature=options['temperature'],
@@ -164,11 +170,12 @@ class OpenAIConnector(LlmConnector):
                 logit_bias=self.parse_bias(options['logit_bias']),
                 max_tokens=options['max_tokens'],
                 n=options['generations'],
-                stop=options['stop_sequences'] if len(options['stop_sequences']) > 0 else None
+                stop=options['stop_sequences'] if len(options['stop_sequences']) > 0 else None,
+                response_format={"type": "json_object"} if options['json_mode'] else None
             )
             return [gen.message.content for gen in results.choices]
         else:
-            results = openai.Completion.create(
+            results = self._client.completions.create(
                 model=self._model,
                 prompt=_clear_chat_markers(prompt),
                 temperature=options['temperature'],
@@ -177,7 +184,7 @@ class OpenAIConnector(LlmConnector):
                 logit_bias=self.parse_bias(options['logit_bias']),
                 max_tokens=options['max_tokens'],
                 n=options['generations'],
-                stop=options['stop_sequences'] if len(options['stop_sequences']) > 0 else None
+                stop=options['stop_sequences'] if len(options['stop_sequences']) > 0 else None,
             )
             return [gen.text for gen in results.choices]
 
