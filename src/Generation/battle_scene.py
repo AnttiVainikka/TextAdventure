@@ -1,41 +1,5 @@
 from Generation.generator import llm_create
-from dataclasses import dataclass
-
-@dataclass
-class EnemyType:
-    name: str
-    description: str
-
-def generate_enemy_types(region_name: str, region_description: str, area_name: str, area_description: str, nr: int = 2) -> list[EnemyType]:
-    enemy_types = llm_create('battle_scene/enemy_types/name', region_name=region_name,
-                                                              region_description=region_description,
-                                                              area_name=area_name,
-                                                              area_description=area_description,
-                                                              number_of_enemy_types=nr)[0].enemy_types
-    
-    descriptions = []
-    for enemy_type in enemy_types:
-        descriptions.append(llm_create('battle_scene/enemy_types/description', region_name=region_name,
-                                                                               region_description=region_description,
-                                                                               area_name=area_name,
-                                                                               area_description=area_description,
-                                                                               enemy_type=enemy_type)[0].enemy_type_description)
-    
-    return [EnemyType(name, description) for (name, description) in zip(enemy_types, descriptions)]
-
-
-def generate_legendary_enemy(region_name: str,
-                             region_description: str,
-                             area_name: str,
-                             area_description: str,
-                             enemy_type: EnemyType) -> EnemyType:
-    data = llm_create('battle_scene/enemy_types/legendary', region_name=region_name,
-                                                            region_description=region_description,
-                                                            area_name=area_name,
-                                                            area_description=area_description,
-                                                            enemy_type=enemy_type.name,
-                                                            enemy_type_description=enemy_type.description)[0]
-    return EnemyType(data.unique_name, data.description)
+from Generation.enemy_type import EnemyType
 
 def generate_intro_context(region_name: str,
                            region_description: str,

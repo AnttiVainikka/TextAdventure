@@ -1,4 +1,5 @@
 from enum import Enum
+from Journey.utility import to_dict
 
 class SkillRarity(Enum):
     Common = 1
@@ -25,5 +26,33 @@ class Skill():
         self.description = description
         self.ally = ally
         self.aoe = aoe
+
+    def __init_from_dict__(self, state: dict):
+        self.name = state["name"]
+        self.multiplier = state["multiplier"]
+        self.stat = state["stat"]
+        self.uses = state["uses"]
+        self.uses_remaining = state["uses_remaining"]
+        self.description = state["description"]
+        self.ally = state["ally"]
+        self.aoe = state["aoe"]
+
+    def create_from_dict(state: dict) -> "Skill":
+        skill = Skill.__new__(Skill)
+        skill.__init_from_dict__(state)
+        return skill
+    
+    def to_dict(self) -> dict:
+        return {
+            "name": to_dict(self.name),
+            "multiplier": to_dict(self.multiplier),
+            "stat": to_dict(self.stat),
+            "uses": to_dict(self.uses),
+            "uses_remaining": to_dict(self.uses_remaining),
+            "description": to_dict(self.description),
+            "ally": to_dict(self.ally),
+            "aoe": to_dict(self.aoe)
+        }
+
     def restore_uses(self):
         self.uses_remaining = self.uses

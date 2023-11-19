@@ -4,7 +4,11 @@ from Characters.skill import Skill
 from Characters.skill import SkillRarity
 from Generation.skill import generate as generate_skill
 from Generation.equipment import generate as generate_equipment
-from random import randint
+from Generation.enemy_type import EnemyType, EnemyRarity
+from random import randint, choice
+
+_MAX_ENEMY_DIFFICULTY = 8
+_MAX_NUMBER_OF_ENEMIES = 5
 
 def create_main_character():
     """ Creating the preset character that can be used before
@@ -31,33 +35,48 @@ def create_main_character():
     main_character.gain_exp(100)
     return main_character
 
-def create_enemies(level: int, difficulty: int):
+def create_enemies(level: int, difficulty: int, enemy_types: list[EnemyType]):
     """ Returns a list of characters that can be used to battle against
     level: average level of enemies
     difficulty: 1-8, how many enemies and of what rarity """
+    sorted_enemy_types = sorted(enemy_types, key=lambda x: x.rarity.value)
+    get_level = lambda rarity: max([1, level-7+rarity*3])
+    get_cls = lambda: ["warrior","rogue","mage"][randint(0,2)]
+
+    if sorted_enemy_types[0].rarity == EnemyRarity.Legendary:
+        return [create_character(sorted_enemy_types[0].name,
+                                 sorted_enemy_types[0].description,
+                                 get_cls(),
+                                 get_level(EnemyRarity.Epic.value),
+                                 sorted_enemy_types[0].rarity.value)]
+
     try:
-        if difficulty > 8:
-            difficulty = 8
+        if difficulty > _MAX_ENEMY_DIFFICULTY:
+            difficulty = _MAX_ENEMY_DIFFICULTY
         if difficulty < 1:
             difficulty = 1
     except TypeError:
         difficulty = 3
+
     enemies = []
-    #TODO use LLM to generate race which will be used for each enemy generated
-    while difficulty > 0:
-        max_rarity = min([4,difficulty])
-        rarity = randint(1,max_rarity)
-        if len(enemies) == 4:
-            rarity = max_rarity
-            difficulty -= difficulty
-        lvl = max([1,level-7+rarity*3])
-        type = ["warrior","rogue","mage"][randint(0,2)]
-        name = f'{["Beginner","Advanced","Expert","Legendary"][rarity-1]} {type}'
-        description = "todo"
-        #TODO Generate name and description for enemy with LLM using type, race, rarity...
-        enemy = create_character(name,description,type,lvl,rarity)
-        enemies.append(enemy)
-        difficulty -= rarity
+    # We only add 1 Epic type of enemy
+    if sorted_enemy_types[0].rarity == EnemyRarity.Epic:
+        enemies.append(create_character(sorted_enemy_types[0].name,
+                                        sorted_enemy_types[0].description,
+                                        get_cls(),
+                                        get_level(EnemyRarity.Epic.value),
+                                        sorted_enemy_types[0].rarity.value))
+        sorted_enemy_types = sorted_enemy_types[1:]
+        difficulty -= EnemyRarity.Epic.value
+
+    while difficulty > 0 and len(enemies) != _MAX_NUMBER_OF_ENEMIES:
+        current_enempy_type = choice(sorted_enemy_types)
+        enemies.append(create_character(current_enempy_type.name,
+                                        current_enempy_type.description,
+                                        get_cls(),
+                                        get_level(current_enempy_type.rarity.value),
+                                        current_enempy_type.rarity.value))
+        difficulty -= current_enempy_type.rarity.value
     return enemies
 
 def create_character(name :str, description: str, type :str, level: int, rarity: int):

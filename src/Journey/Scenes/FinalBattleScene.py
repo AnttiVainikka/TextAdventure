@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 from Generation.area import Area
-from Generation.final_battle_scene import generate_boss, EnemyType
+from Generation.enemy_type import generate_boss, EnemyType
 
 from Journey.Scenes.Scene import Scene
 from Journey.Plays.FinalBattlePlay import FinalBattlePlay
@@ -20,7 +20,7 @@ class FinalBattleScene(Scene):
 
     def __init_from_dict__(self, parent: "Layout", state: dict):
         super().__init_from_dict__(parent, state)
-        self._boss = EnemyType(**state["boss"]) if state["boss"] is not None else None
+        self._boss = EnemyType.create_from_dict(state["boss"])
 
     def to_dict(self) -> dict:
         state = super().to_dict()
