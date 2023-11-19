@@ -1,7 +1,10 @@
 from typing import TYPE_CHECKING
 
+from Characters.create import create_enemies
+from Characters.character import Character
+
 from Generation.area import Area
-from Generation.battle_scene import generate_enemy_types, generate_legendary_enemy, EnemyType
+from Generation.enemy_type import generate_epic_enemy, generate_from_region, EnemyType
 
 from Journey.Scenes.Scene import Scene
 from Journey.Plays.BattlePlay import BattlePlay
@@ -15,15 +18,15 @@ class BattleScene(Scene):
     # TODO: Integrate battle 
     def __init__(self, parent: "Layout", area: Area, difficulty: Difficulty):
         super().__init__(parent, area, difficulty)
-        self._enemy_types = generate_enemy_types(parent.name, parent.description, area.name, area.description)
-        self._leader = generate_legendary_enemy(parent.name, parent.description, area.name, area.description, self._enemy_types[0]) \
+        self._enemy_types = generate_from_region(parent.name, parent.description, area.name, area.description)
+        self._leader = generate_epic_enemy(parent.name, parent.description, area.name, area.description, self._enemy_types[0]) \
                                                 if difficulty == Difficulty.Challenging else None
         self._plays.append(BattlePlay(self, parent.name, parent.description, area, self._enemy_types, self._leader))
 
     def __init_from_dict__(self, parent: "Layout", state: dict):
         super().__init_from_dict__(parent, state)
-        self._enemy_types = [EnemyType(**enemy_type) for enemy_type in state["enemy_types"]]
-        self._leader = EnemyType(**state["leader"]) if state["leader"] is not None else None
+        self._enemy_types = [EnemyType.create_from_dict(enemy_type) for enemy_type in state["enemy_types"]]
+        self._leader = EnemyType.create_from_dict(state["leader"])
 
     def to_dict(self) -> dict:
         state = super().to_dict()

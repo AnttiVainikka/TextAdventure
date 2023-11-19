@@ -1,14 +1,5 @@
 from Generation.generator import llm_create
-from Generation.battle_scene import EnemyType
 from Generation.summarize_context import summarize_context
-
-
-def generate_boss(region_name: str, area_name: str, area_context: str, mission_quest: str) -> EnemyType:
-    data = llm_create('final_battle_scene/boss', region_name=region_name,
-                                                 area_name=area_name,
-                                                 area_context=area_context,
-                                                 mission_quest=mission_quest)[0]
-    return EnemyType(data.boss_name, data.boss_description)
 
 def generate_intro(region_name: str, area_name: str, area_description: str, mission_quest: str, boss_name: str) -> str:
     return llm_create('final_battle_scene/intro', region_name=region_name,

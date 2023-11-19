@@ -2,10 +2,10 @@ from typing import TYPE_CHECKING
 
 from Generation.area import Area
 from Generation.final_battle_scene import *
+from Generation.enemy_type import EnemyType
 
 from Journey.Plays.Play import Play
 from Journey.Interaction import Interaction
-from Journey.utility import to_dict
 from Journey.Action import InteractionAnsweredAction
 
 if TYPE_CHECKING:

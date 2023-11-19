@@ -1,4 +1,5 @@
 from enum import Enum
+from Journey.utility import to_dict
 
 class EquipmentType(Enum):
     Weapon = 1
@@ -27,3 +28,24 @@ class Equipment():
         self.name = name
         self.stats = stats
         self.description = description
+
+    def __init_from_dict__(self, state: dict):
+        self.type = EquipmentType(state["type"])
+        self.rarity = EquipmentRarity(state["rarity"])
+        self.name = state["name"]
+        self.stats = state["stats"]
+        self.description = state["description"]
+
+    def create_from_dict(state: dict) -> "Equipment":
+        equipment = Equipment.__new__(Equipment)
+        equipment.__init_from_dict__
+        return equipment
+
+    def to_dict(self) -> dict:
+        return {
+            "type": to_dict(self.type.value),
+            "rarity": to_dict(self.rarity.value),
+            "name": to_dict(self.name),
+            "stats": to_dict(self.stats),
+            "description": to_dict(self.description)
+        }

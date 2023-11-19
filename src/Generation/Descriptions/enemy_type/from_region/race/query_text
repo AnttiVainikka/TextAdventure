@@ -1,0 +1,4 @@
+Generate a race for the enemy type {{enemy_type}}.
+The description of this enemy type is the following:
+{{description}}
+

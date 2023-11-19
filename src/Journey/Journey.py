@@ -27,20 +27,21 @@ class Journey(BaseActionComponent):
                          for region in self._scenario.kingdom.regions]
         self._nr_finished_layouts = 0
 
-    def create_from_dict(character: Character, state: dict) -> "Journey":
+    def create_from_dict(state: dict) -> "Journey":
         journey = Journey.__new__(Journey)
-        journey.__init_from_dict__(character, state)
+        journey.__init_from_dict__(state)
         return journey
 
-    def __init_from_dict__(self, character: Character, state: dict):
+    def __init_from_dict__(self, state: dict):
         super().__init__(None, ActionConcern.Journey)
-        self._character = character
+        self._character = Character.create_from_dict(state["character"])
         self._scenario = from_dict(state["scenario"])
         self._nr_finished_layouts = state["number_of_finished_layouts"]
         self._layouts = [Layout.create_from_dict(self, layout_state) for layout_state in state["layouts"]]
 
     def to_dict(self) -> dict:
         return {
+            "character": to_dict(self._character),
             "scenario": to_dict(self._scenario),
             "number_of_finished_layouts": to_dict(self._nr_finished_layouts),
             "layouts": to_dict(self._layouts)
