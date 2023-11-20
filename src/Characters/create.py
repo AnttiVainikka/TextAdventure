@@ -23,14 +23,14 @@ def create_main_character():
     multipliers["hp"] = 1.05
     multipliers["atk"] = 1.05
     multipliers["magic"] = 1.05
-    main_character = Character(name,stats,multipliers,description)
-    sword = Equipment("weapon",[12,0],"Basic iron sword")
+    main_character = Character("main", name,stats,multipliers,description)
+    sword = Equipment(EquipmentType.Weapon, EquipmentRarity.Common, [12,0], "Basic iron sword", "A common iron sword")
     main_character.weapon = sword
     fireball = Skill("Fire Ball",1.5,"magic",5,"Hurl a ball of fire at your enemy",False,False)
     heal = Skill("Lesser Heal", -0.8,"magic",8,"Use magic to mend wounds",True,False)
     shockwave = Skill("Shockwave", 500, "atk", 100, "Use to defeat everything",False,True)
     main_character.skills.extend([fireball,heal,shockwave])
-    armour = Equipment("armour",[5,5],"Hero's armour")
+    armour = Equipment(EquipmentType.Armour, EquipmentRarity.Common, [5,5], "Hero's armour", "The armour of the hero")
     main_character.armour = armour
     main_character.gain_exp(100)
     return main_character
@@ -132,28 +132,47 @@ def create_character(name :str, description: str, type :str, level: int, rarity:
         character.skills.append(create_skill(type,rarity-1))
     return character
 
+def create_weapon(user_class: str, user_race: str, user_name: str, level: int, rarity: int) -> Equipment:
+    damage = [2.0, 2.5, 3.0, 3.5, 4.0][randint(0,4)] * 0.2 * level + (rarity*level*0.4)
+
+    if user_class == "warrior":
+        wstats = [int(damage*randint(8,12)*0.1),int(damage*randint(1,12)*0.1)]
+    elif user_class == "rogue":
+        wstats = [int(damage*randint(10,14)*0.1),int(damage*randint(6,12)*0.1)]
+    else: #mage
+        wstats = [int(damage*randint(1,12)*0.1),int(damage*randint(8,16)*0.1)]
+
+    weapon = Equipment(EquipmentType.Weapon, EquipmentRarity(rarity), wstats)
+
+    weapon.name, weapon.description = generate_equipment(weapon.type, weapon.rarity, user_race, user_class, user_name)
+    return weapon
+
+def create_armour(user_class: str, user_race: str, user_name: str, level: int, rarity: int) -> Equipment:
+    defense = [2.0, 2.5, 3.0, 3.5, 4.0][randint(0,4)] * 0.2 * level + (rarity*level*0.4)
+
+    if user_class == "warrior":
+        astats = [int(defense*randint(8,12)*0.1),int(defense*randint(1,12)*0.1)]
+    elif user_class == "rogue":
+        astats = [int(defense*randint(10,14)*0.1),int(defense*randint(6,12)*0.1)]
+    else: #mage
+        astats = [int(defense*randint(1,12)*0.1),int(defense*randint(8,16)*0.1)]
+
+    armour = Equipment(EquipmentType.Armour, EquipmentRarity(rarity), astats)
+    armour.name, armour.description = generate_equipment(armour.type, armour.rarity, user_race, user_class, user_name)
+    return armour
+
+def create_random_equipment(user_class: str, user_race: str, user_name: str, level: int, rarity: int) -> Equipment:
+    match randint(0, 1):
+        case 0:
+            return create_weapon(user_class, user_race, user_name, level, rarity)
+        case 1:
+            return create_armour(user_class, user_race, user_name, level, rarity)
+
 def create_equipment(user_class: str, user_race: str, user_name: str, level: int, rarity: int) -> (Equipment, Equipment):
     """ Takes description, type, level and rarity of the character the equipment is created for
     as parameters and returns a list of [weapon,armour] """
-    damage = [2.0, 2.5, 3.0, 3.5, 4.0][randint(0,4)] * 0.2 * level + (rarity*level*0.4)
-    defense = [2.0, 2.5, 3.0, 3.5, 4.0][randint(0,4)] * 0.2 * level + (rarity*level*0.4)
-    if user_class == "warrior":
-        wstats = [int(damage*randint(8,12)*0.1),int(damage*randint(1,12)*0.1)]
-        astats = [int(defense*randint(8,12)*0.1),int(defense*randint(1,12)*0.1)]
-    elif user_class == "rogue":
-        wstats = [int(damage*randint(10,14)*0.1),int(damage*randint(6,12)*0.1)]
-        astats = [int(defense*randint(10,14)*0.1),int(defense*randint(6,12)*0.1)]
-    else: #mage
-        wstats = [int(damage*randint(1,12)*0.1),int(damage*randint(8,16)*0.1)]
-        astats = [int(defense*randint(1,12)*0.1),int(defense*randint(8,16)*0.1)]
-
-    weapon = Equipment(EquipmentType.Weapon, EquipmentRarity(rarity), wstats)
-    armour = Equipment(EquipmentType.Armour, EquipmentRarity(rarity), astats)
-
-    weapon.name, weapon.description = generate_equipment(weapon.type, weapon.rarity, user_race, user_class, user_name)
-    armour.name, armour.description = generate_equipment(armour.type, armour.rarity, user_race, user_class, user_name)
-
-    return (weapon,armour)
+    return (create_weapon(user_class, user_race, user_name, level, rarity),
+            create_armour(user_class, user_race, user_name, level, rarity))
 
 def create_skill(type: str, rarity: int):
     """

@@ -38,7 +38,7 @@ class Equipment():
 
     def create_from_dict(state: dict) -> "Equipment":
         equipment = Equipment.__new__(Equipment)
-        equipment.__init_from_dict__
+        equipment.__init_from_dict__(state)
         return equipment
 
     def to_dict(self) -> dict:

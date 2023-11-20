@@ -3,10 +3,11 @@ from Journey.utility import to_dict
 from Characters.skill import Skill
 
 class Character():
-    def __init__(self, kind :str, name :str, stats :dict, multipliers :int, description :str, type :str = "Warrior"):
+    def __init__(self, kind :str, name :str, stats :dict, multipliers :int, description :str, type :str = "Warrior", race :str = "Human"):
         """ Used for both playable and npc characters. """
         self.kind = kind
         self.name = name
+        self.race = race
         self.stats = stats
         self.multipliers = multipliers
         self.level = 1
@@ -40,6 +41,7 @@ class Character():
         self.given_exp = state["given_exp"]
         self.enemy = state["enemy"]
         self.type = state["type"]
+        self.race = state["race"]
         self.inventory = [Equipment.create_from_dict(equipment) for equipment in state["inventory"]]
 
     def create_from_dict(state: dict) -> "Character":
@@ -52,6 +54,7 @@ class Character():
         return {
             "kind": to_dict(self.kind),
             "name": to_dict(self.name),
+            "race": to_dict(self.race),
             "stats": to_dict(self.stats),
             "multipliers": to_dict(self.multipliers),
             "level": to_dict(self.level),
