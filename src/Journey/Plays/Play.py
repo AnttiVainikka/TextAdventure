@@ -47,7 +47,7 @@ class Play(BaseActionComponent):
     def reset(self):
         self._current_interaction = None
         for interaction in self._interactions:
-            interaction.reset()
+            if interaction is not None: interaction.reset()
 
     @abstractmethod
     def has_next(self) -> bool:

@@ -136,6 +136,23 @@ class RestAction(PlayAction):
 class SkipAction(PlayAction):
     pass
 
+class RegionSelectionAction(PlayAction):
+    pass
+
+class FactionSelectionAction(PlayAction):
+    pass
+
+class SpecSelectionAction(PlayAction):
+    def __init__(self, play: "Play", index: int):
+        super().__init__(play)
+        self.index = index
+
+class SelectedRegionAction(SpecSelectionAction):
+    pass
+
+class SelectedFactionAction(SpecSelectionAction):
+    pass
+
 #######################
 ##### INTERACTION #####
 class InteractionAction(Action):
