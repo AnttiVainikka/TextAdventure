@@ -1,6 +1,10 @@
 from typing import TYPE_CHECKING
 from random import randint
 
+from Characters.create import create_random_equipment
+from Characters.character import Character
+from Characters.equipment import Equipment, EquipmentRarity
+
 from Journey.Scenes.Scene import Scene
 from Journey.Plays.TreasurePlay import *
 from Journey.Difficulty import Difficulty
@@ -30,19 +34,20 @@ class TreasureScene(Scene):
         self._plays = []
         self._possible_loot = None
 
+        character: Character = parent.parent.character # This looks awful
         match randint(0, 2):
             case 0:
-                self._possible_loot = "Rusty Sword" # TODO: generate a loot using region based loot generation -> needs character class
+                self._possible_loot = create_random_equipment(character.type, character.race, "", character.level, EquipmentRarity(difficulty.value))
                 self._plays.append(FreeTreasurePlay(self, parent.name, parent.description, area, str(self._possible_loot)))
             case 1:
                 self._plays.append(TrapTreasurePlay(self, parent.name, parent.description, area))
             case 2:
-                self._possible_loot = "Rusty Sword" # TODO: generate a loot using region based loot generation -> needs character class
+                self._possible_loot = create_random_equipment(character.type, character.race, "", character.level, EquipmentRarity(difficulty.value))
                 self._plays.append(SacrificeTreasurePlay(self, parent.name, parent.description, area, str(self._possible_loot)))
 
     def __init_from_dict__(self, parent: "Layout", state: dict):
         super().__init_from_dict__(parent, state)
-        self._possible_loot = state["possible_loot"] # TODO: Adjust loot
+        self._possible_loot = Equipment.create_from_dict(state["possible_loot"])
 
     def to_dict(self) -> dict:
         state = super().to_dict()
