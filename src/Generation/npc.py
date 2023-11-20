@@ -1,6 +1,8 @@
 import random
 from typing import TYPE_CHECKING
 from attr import dataclass
+from Characters import character
+from Characters.create import create_character
 
 from Generation.generator import llm_create
 
@@ -16,6 +18,9 @@ class Character:
     personality: str
     background: str
     secrets: str
+
+    def game_character(self) -> character.Character:
+        return create_character(self.name, f'{self.role} {self.personality} {self.background} {self.secrets}', 'warrior', 1, 1)
 
 def _create_names(scenario: 'Scenario', faction: 'Faction') -> list[str]:
     result = llm_create('npc_names',

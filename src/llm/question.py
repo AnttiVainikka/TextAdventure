@@ -45,7 +45,7 @@ Now, repeat the one-word answer:
 """
             return connector.complete(prompt, {
                 'temperature': 0.2,
-                'max_tokens': 1,
+                'max_tokens': 10,
                 'logit_bias': self._bias
             })[0]
         else:

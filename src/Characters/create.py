@@ -94,12 +94,11 @@ def create_character(name :str, description: str, type :str, level: int, rarity:
     multipliers["magic"] = scaling[rarity]
 
     #Create character, level them up and give them equipment
-    kind = "?" #what does kind mean/do?
-    character = Character(kind,name,stats,multipliers,description,type.capitalize())
+    character = Character('npc', name,stats,multipliers,description,type.capitalize())
     character.given_exp = level * 5
     for exp in range (1,level):
         character.gain_exp(exp*10)
-    equipment = create_equipment(user_class=type, user_race=kind, user_name=name, level=level, rarity=rarity)
+    equipment = create_equipment(user_class=type, user_race='human', user_name=name, level=level, rarity=rarity)
     character.weapon = equipment[0]
     character.armour = equipment[1]
 
