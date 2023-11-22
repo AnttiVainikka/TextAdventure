@@ -51,13 +51,13 @@ def _create_faction(scenario: Scenario, power: int, stance: InitialStance, align
 
     match stance:
         case InitialStance.FRIENDLY:
-            favor = 100
+            favor = 35
         case InitialStance.NEUTRAL:
             favor = 0
         case InitialStance.SUSPICIOUS:
-            favor = -50
+            favor = -25
         case InitialStance.HOSTILE:
-            favor = -100
+            favor = -50
 
     results = llm_create('faction', count,
                capital_name=scenario.capital.name,
