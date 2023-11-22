@@ -46,7 +46,7 @@ def construct_inventory_row(index: int, equipment_list: list): #Forms one row of
   )
   return layout
 
-def construct_inventory_grid(equipment: list): #Forms a 3x3 grid, so the inventory does't show more than 9 items
+def construct_inventory_grid(equipment: list): #Forms a 3x3 grid, so the inventory doesn't show more than 9 items
   layout = Layout()
   layout.split_column(
     Layout(Panel("",style="black"),name="top_buffer", size = 2),
