@@ -54,7 +54,7 @@ def construct_inventory_grid(equipment: list): #Forms a 3x3 grid, so the invento
     construct_inventory_row(index=3, equipment_list=equipment),
     construct_inventory_row(index=6, equipment_list=equipment)
   ) 
-  #Same thing here as on lines x-y
+  #Same thing here as on lines 44-45
   return(layout)
 
 def print_inventory(equipment :list):
