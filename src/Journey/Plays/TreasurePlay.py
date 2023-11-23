@@ -64,10 +64,6 @@ class TreasurePlay(Play):
     def _interaction_leave(self) -> "Interaction":
         return self._interactions[TreasurePlay._INDEX_LEAVE]
 
-    def has_next(self) -> bool:
-        return self._current_interaction != self._interaction_leave and \
-               self._current_interaction != self._interaction_open
-
     def _next(self) -> Interaction:
         match self._current_interaction:
             case None:

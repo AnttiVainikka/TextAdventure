@@ -1,6 +1,6 @@
 import random
 from typing import TYPE_CHECKING
-from attr import dataclass
+from dataclasses import dataclass
 from Characters import character
 from Characters.create import create_character
 

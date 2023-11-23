@@ -69,8 +69,7 @@ class SceneFinishedAction(SceneAction):
     pass
 
 class EnterRegionAction(SceneAction):
-    def __init__(self, scene: "Scene"):
-        super().__init__(scene, ActionConcern.Journey)
+    pass
 
 class ReturnToCapitalAction(SceneAction):
     def __init__(self, scene: "Scene"):
@@ -95,6 +94,11 @@ class RefillHPAction(SceneAction):
     def __init__(self, scene: "Scene", hp: float):
         super().__init__(scene, ActionConcern.Journey)
         self.hp = hp
+
+class MoveToRegionAction(SceneAction):
+    def __init__(self, scene: "Scene", region_index: int):
+        super().__init__(scene, ActionConcern.Journey)
+        self.region = region_index
 
 ################
 ##### PLAY #####

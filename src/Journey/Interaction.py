@@ -96,7 +96,7 @@ class Interaction(BaseActionComponent):
         """
         return self._is_info
 
-    def reset(self):
+    def restart(self):
         self._given_answer = None
 
     def __call__(self, answer: object):

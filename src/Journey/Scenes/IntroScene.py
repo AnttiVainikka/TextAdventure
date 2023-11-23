@@ -18,11 +18,10 @@ class IntroScene(Scene):
     def _next(self) -> "IntroPlay":
         return self._plays[0]
 
-    def has_next(self) -> bool:
-        return self._current_play != self._plays[0]
-
     def _process_IntroLeaveAction(self, action: "IntroLeaveAction"):
+        self.stop()
         self._raise_action(ReturnToCapitalAction(self))
 
     def _process_IntroEnterAction(self, action: "IntroEnterAction"):
+        self.stop()
         self._raise_action(EnterRegionAction(self))

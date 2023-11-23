@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING
 from Journey.Scenes.Scene import Scene
+
+# Need import these so the runtime can recognize the types
 from Journey.Scenes.IntroScene import IntroScene
 from Journey.Scenes.RiddleScene import RiddleScene
 from Journey.Scenes.TreasureScene import TreasureScene
@@ -7,6 +9,7 @@ from Journey.Scenes.RestScene import RestScene
 from Journey.Scenes.BattleScene import BattleScene
 from Journey.Scenes.FinalBattleScene import FinalBattleScene
 from Journey.Scenes.OutroScene import OutroScene
+from Journey.Scenes.CapitalScene import CapitalScene
 
 if TYPE_CHECKING:
     from Journey.Layout import Layout

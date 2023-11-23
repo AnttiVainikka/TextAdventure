@@ -21,6 +21,8 @@ from Journey.Scenes.BattleScene import BattleScene
 from Journey.Scenes.FinalBattleScene import FinalBattleScene
 from Journey.Scenes.OutroScene import OutroScene
 
+from Journey.BaseLayout import BaseLayout
+
 if TYPE_CHECKING:
     from Journey.Journey import Journey
 
@@ -28,7 +30,7 @@ import log
 
 _logger = log.getLogger(__name__)
 
-class Layout(BaseActionComponent):
+class Layout(BaseLayout):
     _DIFFICULTY_PROBABILITIES = {
         Difficulty.Easy: 0.35,
         Difficulty.Normal: 0.35,
@@ -51,7 +53,7 @@ class Layout(BaseActionComponent):
                  name: str,
                  description: str,
                  number_of_areas: int):
-        super().__init__(parent, ActionConcern.Layout)
+        super().__init__(parent)
 
         self._name = name
         self._description = description
@@ -70,7 +72,6 @@ class Layout(BaseActionComponent):
             _logger.debug(f"{i + 1}: {area.name} - {area.description}")
 
         # Creating scenes
-        self._scenes: list[Scene] = []
         difficulty_selector = Selector(list(Layout._DIFFICULTY_PROBABILITIES.keys()), list(Layout._DIFFICULTY_PROBABILITIES.values()))
         scene_selector = NonRepSelector(list(Layout._SCENE_PROBABILITIES.keys()),
                                         list(Layout._SCENE_PROBABILITIES.values()),
@@ -102,12 +103,11 @@ class Layout(BaseActionComponent):
         self._nr_finished_scenes = 0
 
     def __init_from_dict__(self, parent: "Journey", state: dict):
-        super().__init__(parent, ActionConcern.Layout)
+        super().__init_from_dict__(parent, state)
         self._name = state["name"]
         self._description = state["description"]
         self._mission = Mission.create_from_dict(state["mission"])
         self._areas = [Area(area["name"], area["description"]) for area in state["areas"]]
-        self._scenes = [create_scene(self, scene_dict) for scene_dict in state["scenes"]]
 
     def create_from_dict(parent: "Journey", state: dict) -> "Layout":
         layout = Layout.__new__(Layout)
@@ -119,31 +119,21 @@ class Layout(BaseActionComponent):
             "name": to_dict(self._name),
             "description": to_dict(self._description),
             "mission": to_dict(self._mission),
-            "areas": [to_dict(area) for area in self._areas],
-            "scenes": [to_dict(scene) for scene in self._scenes]
+            "areas": [to_dict(area) for area in self._areas]
         }
     
-    def has_next(self) -> bool:
-        return self.current_scene != self.scenes[-1] or\
-               not self.current_scene.is_finished
-
-    def next(self) -> Scene:
-        return self.current_scene
+    def _first_scene(self) -> "Scene":
+        return self._scenes[0]
 
     ############
     # Properties
-    @property
-    def is_finished(self) -> bool:
-        return self._nr_finished_scenes == len(self._scenes)
-
     @property
     def number_of_finished_scenes(self) -> int:
         return self._nr_finished_scenes
 
     @property
     def current_scene(self) -> Scene:
-        if self._nr_finished_scenes >= len(self._scenes): return self._scenes[-1]
-        return self._scenes[self._nr_finished_scenes]
+        return self._current_scene
 
     @property
     def name(self) -> str:
@@ -173,8 +163,14 @@ class Layout(BaseActionComponent):
     # Processes
     def _process_SceneFinishedAction(self, action: SceneFinishedAction):
         scene = action.scene
-        if self._nr_finished_scenes == len(self._scenes): return
-        if scene == self.current_scene and scene.is_finished:
-            self._nr_finished_scenes += 1
-            if self._nr_finished_scenes == len(self._scenes):
+        if scene == self._current_scene:
+            self._current_scene.stop()
+            index = self._scenes.index(self._current_scene)
+            if index < len(self._scenes) - 1:
+                self._current_scene = self._scenes[index + 1]
+            else:
+                self.stop()
                 self._raise_action(LayoutFinishedAction(self))
+
+    def _process_EnterRegionAction(self, action: EnterRegionAction):
+        self._current_scene = self.scenes[1]

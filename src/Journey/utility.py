@@ -1,8 +1,10 @@
 from dataclasses import dataclass, is_dataclass, fields
 from typing import Type
+from enum import Enum
 
 def to_dict(obj: object) -> dict:
     if obj is None: return None
+    if isinstance(obj, Enum): return obj.value
     if is_dataclass(obj): return to_dict_dataclass(obj)
     if isinstance(obj, list):
         return [to_dict(elem) for elem in obj]            
@@ -27,3 +29,21 @@ def to_dict_dataclass(dc: object) -> dict:
         state[f"{field.name}"] = to_dict(getattr(dc, field.name))
     return state
     
+def from_dict(state: dict, key: str) -> object:
+    """
+    Use this only for built-in types
+    """
+    if key in state.keys():
+        return state[key]
+    else:
+        return None
+    
+def from_dict_index(state: dict, key: str, l: list[object]) -> object:
+    obj = from_dict(state, key)
+    if obj is None:
+        return None
+    else:
+        if obj in l:
+            return l.index(obj)
+        else:
+            return None

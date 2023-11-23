@@ -151,6 +151,9 @@ def from_dict(state: dict) -> Scenario:
     return _from_dict(state, Scenario)
 
 def _from_dict(state, type):
+    if getattr(type, "__origin__", None) == list:
+        inner_type = getattr(type, "__args__", [])[0]
+        return [_from_dict(inner_state, inner_type) for inner_state in state]
     if not is_dataclass(type): return state
     real_state = {}
     for key, value in state.items():

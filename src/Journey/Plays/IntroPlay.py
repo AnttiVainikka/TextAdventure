@@ -25,6 +25,7 @@ class IntroPlay(Play):
         context = generate(region_name, region_description, mission)
         self._interactions = [QSAInteraction(self, context, {IntroChoice.ENTER.value: f"Enter to {region_name}",
                                                              IntroChoice.RETURN.value: f"Return to {capital_name}"})]
+
     def _process_InteractionAnsweredAction(self, action: InteractionAnsweredAction):
         interaction = action.interaction
         if interaction == self._interactions[0] and interaction.is_answered:
@@ -32,9 +33,6 @@ class IntroPlay(Play):
                 self._raise_action(IntroEnterAction(self))
             else:
                 self._raise_action(IntroLeaveAction(self))
-
-    def has_next(self):
-        return self._interactions[0] != self._current_interaction
 
     def _next(self) -> Interaction:
         return self._interactions[0]

@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING
 
+from Generation.faction import Faction
+
 from Journey.Scenes.Scene import Scene
 from Journey.Difficulty import Difficulty
 
@@ -18,15 +20,15 @@ class CapitalScene(Scene):
     _INDEX_MAIN = 0
     _INDEX_FACTION_SELECTION = 1
     _INDEX_REGION_SELECTION = 2
+    _INDEX_START_FACTIONS = 3
     
-    # factions: not sure how to connect with the necassary npcs
-    def __init__(self, parent: "Layout", factions: list[object], regions: list[str]):
+    def __init__(self, parent: "Layout", factions: list[Faction], regions: list[str]):
         super().__init__(parent, None, Difficulty.Easy)
         self._plays.append(MainPlay(self))
-        self._plays.append(FactionSelectionPlay(self, ["Faction A", "Faction B", "Faction C"]))
+        self._plays.append(FactionSelectionPlay(self, [faction.name for faction in factions]))
         self._plays.append(RegionSelectionPlay(self, regions))
-        self._faction_plays = [FactionPlay(self, faction) for faction in factions]
-
+        for faction in factions:
+            self._plays.append(FactionPlay(self, parent.parent.character, parent.parent.scenario, faction))
         self._current_play = self._play_main
 
     @property
@@ -41,17 +43,29 @@ class CapitalScene(Scene):
     def _play_region_selection(self) -> RegionSelectionPlay:
         return self._plays[CapitalScene._INDEX_REGION_SELECTION]
 
+    @property
+    def _play_faction(self) -> list[FactionPlay]:
+        return self._plays[CapitalScene._INDEX_START_FACTIONS:]
+
     def _process_RegionSelectionAction(self, action: RegionSelectionAction):
+        self._current_play.stop()
         self._current_play = self._play_region_selection
 
     def _process_FactionSelectionAction(self, action: FactionSelectionAction):
+        self._current_play.stop()
         self._current_play = self._play_faction_selection
 
+    def _process_SelectedRegionAction(self, action: SelectedRegionAction):
+        self._current_play.stop()
+        self._raise_action(MoveToRegionAction(self, action.index - 1))
+
     def _process_SelectedFactionAction(self, action: SelectedFactionAction):
-        pass
+        self._current_play.stop()
+        self._current_play = self._play_faction[action.index - 1]
 
     def _next(self) -> "Play":
         return self._current_play
 
-    def has_next(self) -> bool:
-        return True
+    def _restart(self):
+        super()._restart()
+        self._current_play = self._play_main

@@ -11,19 +11,16 @@ if TYPE_CHECKING:
 class FactionSelectionPlay(Play):
     def __init__(self, parent: "IntroScene", faction_names: list[str]):
         super().__init__(parent)
-        self._choices = {
+        choices = {
             i + 1: faction_name for (i, faction_name) in enumerate(faction_names)
         }
 
-        self._interactions.append(QSAInteraction(self, "Who do you want to talk to?", self._choices))
+        self._interactions.append(QSAInteraction(self, "Who do you want to talk to?", choices))
 
     def _process_InteractionAnsweredAction(self, action: InteractionAnsweredAction):
         interaction = action.interaction
         if interaction == self._interactions[0] and interaction.is_answered:
             self._raise_action(SelectedFactionAction(self, interaction.answer))
-
-    def has_next(self):
-        return self._interactions[0] != self._current_interaction
 
     def _next(self) -> QSAInteraction:
         return self._interactions[0]

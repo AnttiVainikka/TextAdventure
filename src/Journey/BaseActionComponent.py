@@ -12,6 +12,10 @@ class BaseActionComponent(ABC):
         self._action_concern = action_concern
 
     @property
+    def in_progress(self) -> bool:
+        return self._in_progress
+
+    @property
     def parent(self) -> object:
         return self._parent
     
@@ -45,7 +49,8 @@ class BaseActionComponent(ABC):
     def _accept_action(self, action: Action):
         if self._action_concern in action.concern:
             self._process_action(action)
-        self._raise_action(action)
+        if self._parent is not None:
+            self._parent._accept_action(action)
 
     def _process_actions(self, actions: Actions):
         for action in actions.specific(self._action_concern):

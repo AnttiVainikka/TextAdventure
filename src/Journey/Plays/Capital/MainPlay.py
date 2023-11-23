@@ -16,12 +16,12 @@ class MainChoice(Enum):
 class MainPlay(Play):
     def __init__(self, parent: "IntroScene"):
         super().__init__(parent)
-        self._choices = {
+        choices = {
             MainChoice.SELECT_REGION.value: "Select region...",
             MainChoice.SELECT_FACTION.value: "Select faction..."
         }
 
-        self._interactions.append(QSAInteraction(self, "Where do you want to go?", self._choices))
+        self._interactions.append(QSAInteraction(self, "Where do you want to go?", choices))
 
     def _process_InteractionAnsweredAction(self, action: InteractionAnsweredAction):
         interaction = action.interaction
@@ -30,9 +30,6 @@ class MainPlay(Play):
                 self._raise_action(RegionSelectionAction(self))
             else:
                 self._raise_action(FactionSelectionAction(self))
-
-    def has_next(self):
-        return self._interactions[0] != self._current_interaction
 
     def _next(self) -> QSAInteraction:
         return self._interactions[0]

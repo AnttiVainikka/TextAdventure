@@ -7,8 +7,11 @@ from Generation.faction import Faction
 from Generation.npc import Character
 from Generation.scenario import Scenario
 
+from Characters.character import Character as RealCharacter #?
+
 from Journey.Plays.Play import Play
 from Journey.Interaction import Interaction
+from Journey.utility import to_dict, to_dict_index
 
 from Journey.Action import InteractionAnsweredAction, PlayFinishedAction
 from llm.dialogue import Dialogue, Message
@@ -30,18 +33,34 @@ class FactionPlay(Play):
     _voices: dict[str, str]
 
     _turns_left: int
-    _prev_interaction: Optional[Interaction]
     favor: int
 
     def __init__(self, parent: "CapitalScene", player: Character, scenario: Scenario, faction: Faction):
         super().__init__(parent)
         self._player = player
         self._faction = faction
-        self._chat = _init_dialogue(player, scenario, faction)
+        self._npcs = [npc.game_character() for npc in faction.npcs]
+        self._chat = _init_dialogue(player, scenario, faction, self._npcs)
         self._voices = {}
         self._turns_left = 10
-        self._prev_interaction = None
         self.favor = faction.favor
+
+    def to_dict(self) -> dict:
+        state = super().to_dict()
+        state["faction"] = to_dict_index(self._faction, self.parent.parent.parent.factions) # This is disgusting, solve it later
+        state["npcs"] = to_dict(self._npcs)
+        state["turns_left"] = to_dict(self._turns_left)
+        state["favor"] = to_dict(self.favor)
+        return state
+
+    def __init_from_dict__(self, parent: "CapitalScene", state: dict):
+        super().__init_from_dict__(parent, state)
+        self._player = self.parent.parent.parent.character # This is disgusting, solve it later
+        self._faction = self.parent.parent.parent.factions[state["faction"]] # Same
+        self._npcs = [RealCharacter.create_from_dict(character) for character in state["npcs"]]
+        self._chat = _init_dialogue(self._player, self.parent.parent.parent.scenario, self._faction, self._npcs)
+        self._turns_left = state["turns_left"]
+        self.favor = state["favor"]
 
     def has_next(self):
         return self._turns_left > 0
@@ -50,9 +69,9 @@ class FactionPlay(Play):
         raise RuntimeError('unimplemented')
 
     def _next(self) -> Interaction:
-        if self._prev_interaction != None:
+        if self._current_interaction != None:
             # Append player's reply to dialogue thread and analyze the sentiment in it
-            self._chat.talk_player(self._player, self._prev_interaction.answer)
+            self._chat.talk_player(self._player, self._current_interaction.answer)
             sentiment = self._chat.analyze(_SENTIMENT_PROMPT).lower()
 
             # Based on sentiment, change favor
@@ -97,7 +116,7 @@ class FactionPlay(Play):
         # Don't wait for NPC to finish
 
         interaction = Interaction(self, msg.render())
-        self._prev_interaction = interaction
+        self._current_interaction = interaction
         return interaction
     
     def _speak_msg(self, msg: Message) -> None:
@@ -134,7 +153,7 @@ def _get_favor_text(favor: str) -> str:
     else:
         return 'fiercely loyal to the current ruler. Its members will be outright hostile, with words if not swords.'
     
-def _init_dialogue(player: Character, scenario: Scenario, faction: Faction) -> Dialogue:
+def _init_dialogue(player: Character, scenario: Scenario, faction: Faction, npcs: list[Character]) -> Dialogue:
     # Create context with basic world information, etc.
     context = f"""{scenario.kingdom.description}
 
@@ -152,8 +171,6 @@ But now, a rebellion to overthrow the {scenario.ruler.title} {scenario.ruler.nam
 {faction.name} is initially {_get_favor_text(faction.favor)}
 This the conversation between {player.name} and several of leaders of the faction."""
     
-    # Convert NPCs to game characters TODO memoize for performance
-    npcs = [npc.game_character() for npc in faction.npcs]
     return Dialogue(context, [player, *npcs])
 
 def _speak(voice: str, text: str) -> None:

@@ -57,25 +57,18 @@ class TreasureScene(Scene):
     def _next(self) -> "TreasurePlay":
         return self._plays[0]
 
-    def has_next(self) -> bool:
-        return self._current_play != self._plays[0]
-
     def _process_OpenSacrificeChestAction(self, action: OpenSacrificeChestAction):
         self._raise_action(DamageAction(self, TreasureScene._DIFFICULTY_TO_DAMAGE[self._difficulty]))
         self._raise_action(LootAction(self, self._possible_loot))
-        self._is_finished = True
         self._raise_action(SceneFinishedAction(self))
 
     def _process_OpenFreeChestAction(self, action: OpenFreeChestAction):
         self._raise_action(LootAction(self, self._possible_loot))
-        self._is_finished = True
         self._raise_action(SceneFinishedAction(self))
 
     def _process_OpenTrapChestAction(self, action: OpenTrapChestAction):
         self._raise_action(DamageAction(self, TreasureScene._DIFFICULTY_TO_DAMAGE[self._difficulty]))
-        self._is_finished = True
         self._raise_action(SceneFinishedAction(self))
 
     def _process_LeaveChestAction(self, action: LeaveChestAction):
-        self._is_finished = True
         self._raise_action(SceneFinishedAction(self))

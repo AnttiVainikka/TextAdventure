@@ -29,6 +29,3 @@ class FinalBattleScene(Scene):
 
     def _next(self) -> "FinalBattlePlay":
         return self._plays[0]
-
-    def has_next(self) -> bool:
-        return self._current_play != self._plays[0]
