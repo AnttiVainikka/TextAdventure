@@ -161,6 +161,30 @@ class QSAInteraction(Interaction):
         state["possible_answers"] = self._possible_answers
         return state
 
+    @property
+    def possible_answers(self) -> dict:
+        return self._possible_answers
+
+    def key_to_answer(self, key: int):
+        return self._possible_answers[key]
+
+    def answer_to_key(self, answer: str):
+        for key, value in self._possible_answers.items():
+            if value == answer:
+                return key
+        return None
+
+    def remove_answer(self, key: int):
+        if key in self._possible_answers:
+            del self._possible_answers[key]
+        
+        new_possible_answers = {}
+        new_key = min(self._possible_answers.keys())
+        for key, value in sorted(self._possible_answers.items()):
+            new_possible_answers[new_key] = value
+            new_key += 1
+        self._possible_answers = new_possible_answers
+
     def __call__(self, answer: int):
         """
         This can be used to answer the question within of the QSAInteraction class. 

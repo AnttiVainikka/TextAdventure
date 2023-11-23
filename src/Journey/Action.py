@@ -96,9 +96,9 @@ class RefillHPAction(SceneAction):
         self.hp = hp
 
 class MoveToRegionAction(SceneAction):
-    def __init__(self, scene: "Scene", region_index: int):
+    def __init__(self, scene: "Scene", region: str):
         super().__init__(scene, ActionConcern.Journey)
-        self.region = region_index
+        self.region = region
 
 ################
 ##### PLAY #####
@@ -140,22 +140,11 @@ class RestAction(PlayAction):
 class SkipAction(PlayAction):
     pass
 
-class RegionSelectionAction(PlayAction):
-    pass
-
-class FactionSelectionAction(PlayAction):
-    pass
-
-class SpecSelectionAction(PlayAction):
-    def __init__(self, play: "Play", index: int):
+class SelectionAction(PlayAction):
+    def __init__(self, play: "Play", index: int, value: str):
         super().__init__(play)
         self.index = index
-
-class SelectedRegionAction(SpecSelectionAction):
-    pass
-
-class SelectedFactionAction(SpecSelectionAction):
-    pass
+        self.value = value
 
 #######################
 ##### INTERACTION #####

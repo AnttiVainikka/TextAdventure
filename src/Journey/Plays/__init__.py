@@ -10,10 +10,7 @@ from Journey.Plays.BattlePlay import BattlePlay
 from Journey.Plays.FinalBattlePlay import FinalBattlePlay
 from Journey.Plays.OutroPlay import OutroPlay
 from Journey.Plays.Capital.FactionPlay import FactionPlay
-from Journey.Plays.Capital.MainPlay import MainPlay
-from Journey.Plays.Capital.RegionSelectionPlay import RegionSelectionPlay
-from Journey.Plays.Capital.FactionSelectionPlay import FactionSelectionPlay
-
+from Journey.Plays.SelectionPlay import SelectionPlay
 
 if TYPE_CHECKING:
     from Journey.Scenes.Scene import Scene

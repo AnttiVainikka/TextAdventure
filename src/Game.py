@@ -11,7 +11,6 @@ class Game:
         self.journey: Journey = None
         if save_file is not None:
             self.journey = Journey.create_from_dict(json.load(open(save_file, "r")))
-            #open("saves/another_test_journey.json", "w").write(json.dumps(self.journey.to_dict(), indent=4))
 
     def create_character(self) -> Character:
         return create_main_character() # TODO: Create this properly so the player can actaully create/select a character
@@ -29,5 +28,5 @@ class Game:
 
         self.journey.run()
 
-game = Game("saves/test_journey.json")
+game = Game("test_journey.json")
 game.start()

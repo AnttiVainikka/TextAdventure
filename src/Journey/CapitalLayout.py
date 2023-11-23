@@ -18,6 +18,13 @@ class CapitalLayout(BaseLayout):
         kingdom = parent.kingdom
         self._scenes.append(CapitalScene(self, parent.factions, [region.name for region in kingdom.regions]))
 
+    @property
+    def scene(self) -> CapitalScene:
+        return self._scenes[0]
+
+    def remove_region(self, region: str):
+        self.scene.remove_region(region)
+
     def create_from_dict(parent: "Journey", state: dict) -> "BaseLayout":
         layout = CapitalLayout.__new__(CapitalLayout)
         layout.__init_from_dict__(parent, state)

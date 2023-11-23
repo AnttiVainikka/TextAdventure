@@ -100,6 +100,8 @@ class Journey(BaseActionComponent, LoopManager):
     def _process_LayoutFinishedAction(self, action: LayoutFinishedAction):
         layout = action.layout
         if layout == self._current_layout:
+            if layout in self._layouts:
+                self._capital_layout.remove_region(layout.name)
             self._current_layout = self._capital_layout
 
     def _process_RefillHPAction(self, action: RefillHPAction):
@@ -116,7 +118,7 @@ class Journey(BaseActionComponent, LoopManager):
 
     def _process_MoveToRegionAction(self, action: MoveToRegionAction):
         self._current_layout.stop()
-        self._current_layout = self._layouts[action.region]
+        self._current_layout = next((layout for layout in self._layouts if layout.name == action.region), None) 
 
     def _process_ReturnToCapitalAction(self, action: ReturnToCapitalAction):
         self._current_layout.stop()

@@ -55,13 +55,16 @@ class Play(BaseActionComponent, LoopManager):
         return self._current_interaction
 
     def _do_work(self):
-        interaction = self.next()
-        Output(str(interaction))
-        if interaction.is_info:
-            interaction(Input("Press enter to continue..."))
-        else:
-            interaction(UserInput())
-
+        try:
+            interaction = self.next()
+            Output(str(interaction))
+            if interaction.is_info:
+                interaction(Input("Press enter to continue..."))
+            else:
+                interaction(UserInput())
+        except ValueError:
+            pass
+        
     def next(self) -> "Interaction":
         self._current_interaction = self._next()
         self._current_interaction.restart()
