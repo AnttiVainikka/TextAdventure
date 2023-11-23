@@ -8,6 +8,8 @@ test_rare = Equipment(name="Fiery Waraxe"
                       , description="What happens when a description is too long?" + 
                       "This is What happens when a description is too long?" +
                       "This is What happens when a description is too long?" +
+                      "This is What happens when a description is too long?" +
+                      "This is What happens when a description is too long?" +
                       "This is What happens when a description is too long?")
 test_epic = Equipment(name="Phalar Aluve", rarity = EquipmentRarity.Epic)
 test_lege = Equipment(name="Frostmourne"
@@ -38,7 +40,6 @@ test_char = Character(kind="",
                       description="")
 test_char.weapon = test_epic
 test_char.armour = test_rare_armour
-#print_inventory(equipment=equipment_list)
+print_inventory(equipment=equipment_list)
 #view_item(character=test_char, equipment=test_lege)
-view_item(character=test_char, equipment=test_lege_armour)
-#print(Panel.fit("Hello, [red]World!"))
+#view_item(character=test_char, equipment=test_lege_armour)

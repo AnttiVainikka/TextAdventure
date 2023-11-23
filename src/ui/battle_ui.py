@@ -44,15 +44,12 @@ def clear_console():
 def print_battle_status(enemies :list, friends :list):
     layout = Layout()
     layout.split_column(
-        Layout(name="enemies"),
-        Layout(name="middle"),
-        Layout(name="allies")
+      Layout(Panel("",style="black"),name="top_buffer",size=2),
+      Layout(name="enemies", size=10),
+      Layout(Panel("",style="black"),name="top_buffer",size=5),
+      Layout(name="allies", size=10)
     )
-    layout["enemies"].size = 10
-    layout["middle"].size = 5
-    layout["allies"].size = 10
     construct_character_row(fighters=enemies, layout=layout, relation="enemies")
-    layout["middle"].split_row(Panel(""))
     construct_character_row(fighters=friends, layout=layout, relation="allies")
     clear_console()
     print(layout)

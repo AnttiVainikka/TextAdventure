@@ -89,9 +89,9 @@ def view_item(equipment, character):
   new_equipment_text = texts[1]
 
   layout = Layout()
-  layout.split_row(
+  layout.split_column(
     Layout(Panel("",style="black"),size=2),
-    Layout(name="equipment"))
+    Layout(name="equipment", size=25))
   layout["equipment"].split_row(
     Panel(current_equipment_text),
     Panel(new_equipment_text)
