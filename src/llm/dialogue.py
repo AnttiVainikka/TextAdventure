@@ -67,18 +67,17 @@ The characters present are:
 {''.join([_character_intro(char) for char in self.characters])}
 
 {"Thus far, these things have been said:" if len(self._messages) > 0 else ''}
-{''.join(_render_msg(msg) for msg in self._messages)}
-"""
+{''.join(_render_msg(msg) for msg in self._messages)}"""
     
-    def _get_npc_reply(self, character: Optional[Character], instruction: Optional[str]) -> Message:
-        instruct_text = f'\n{instruction}' if instruction != None else ''
+    def _get_npc_reply(self, character: Optional[Character], instruction: Optional[str] = 'Be brief; this is spoken dialogue.') -> Message:
         for _ in range(2):
             
             if len(self._messages) == 0:
                 prompt = f"""{self._to_prompt()}
 
 {'How would one of the NPCs (not the player character) begin the conversation?'
- if character == None else f'How would the NPC {character.name} initiate this conversation?'}{instruct_text}
+ if character == None else f'How would the NPC {character.name} initiate this conversation?'}
+{instruction}
 Write what they would say below in exactly this format:
 <Character name> <character mannerisms>. "<their reply>"
 """
@@ -86,7 +85,8 @@ Write what they would say below in exactly this format:
                 prompt = f"""{self._to_prompt()}
 
 {'How would one of the NPCs continue this conversation?'
- if character == None else 'How would the NPC {character.name} reply to this?'}{instruct_text}
+ if character == None else 'How would the NPC {character.name} reply to this?'}
+{instruction}
 Write their reply below in this format:
 <Character name> <character mannerisms>. "<their reply>"
 """
@@ -100,6 +100,9 @@ Write their reply below in this format:
             if quote_start == -1:
                 continue
             quote_end = result.find('"', quote_start + 1)
+            if quote_end < len(result) - 5:
+                continue # LLM propably tried to generate something after this
+            
             mannerisms = result[:quote_start]
             if character == None:
                 for ch in [ch for ch in self.characters if ch.kind == 'npc']:

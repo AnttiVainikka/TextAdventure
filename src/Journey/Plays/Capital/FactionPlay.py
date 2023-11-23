@@ -1,4 +1,8 @@
+from io import BytesIO
+import random
 from typing import TYPE_CHECKING, Optional
+
+import numpy
 from Generation.faction import Faction
 from Generation.npc import Character
 from Generation.scenario import Scenario
@@ -7,7 +11,14 @@ from Journey.Plays.Play import Play
 from Journey.Interaction import Interaction
 
 from Journey.Action import InteractionAnsweredAction, PlayFinishedAction
-from llm.dialogue import Dialogue
+from llm.dialogue import Dialogue, Message
+
+from openai import OpenAI
+import pydub
+import sounddevice
+import pydub.playback
+
+tts_client = OpenAI()
 
 if TYPE_CHECKING:
     from Journey.Scenes.CapitalScene import CapitalScene
@@ -16,6 +27,7 @@ class FactionPlay(Play):
     _player: Character
     _faction: Faction
     _chat: Dialogue
+    _voices: dict[str, str]
 
     _turns_left: int
     _prev_interaction: Optional[Interaction]
@@ -26,6 +38,7 @@ class FactionPlay(Play):
         self._player = player
         self._faction = faction
         self._chat = _init_dialogue(player, scenario, faction)
+        self._voices = {}
         self._turns_left = 10
         self._prev_interaction = None
         self.favor = faction.favor
@@ -47,7 +60,7 @@ class FactionPlay(Play):
             old_favor_text = _get_favor_text(self.favor)
             match sentiment:
                 case 'positive':
-                    self.favor += 5
+                    self.favor += 8
                     self._chat.add_note(f'{self._faction.name} approves of this.')
                 case 'negative':
                     self.favor -= 5
@@ -64,7 +77,11 @@ class FactionPlay(Play):
             return None
         elif self.favor >= 50:
             self._chat.add_note(f'The player character has convinced {self._faction.name} to join the rebellion! They have received all they want from the player character.')
-            print(self._chat.talk_npc(instruction='The faction leader should tell the player character that they will join the rebellion.').render())
+            msg = self._chat.talk_npc(instruction='The faction leader should tell the player character that they will join the rebellion.')
+            _speak('fable', msg.mannerisms)
+            sounddevice.wait() # Wait for narrator to finish
+            self._speak_msg(msg)
+            print(msg.render())
             return None
         elif self._turns_left == 0:
             self._chat.add_note(f'{self._faction.name} is still {_get_favor_text(self.favor)}')
@@ -74,9 +91,33 @@ class FactionPlay(Play):
 
         # Let one of the NPCs talk
         msg = self._chat.talk_npc()
+        _speak('fable', msg.mannerisms)
+        sounddevice.wait() # Wait for narrator to finish
+        self._speak_msg(msg)
+        # Don't wait for NPC to finish
+
         interaction = Interaction(self, msg.render())
         self._prev_interaction = interaction
         return interaction
+    
+    def _speak_msg(self, msg: Message) -> None:
+        speaker = msg.speaker.name
+        if not speaker in self._voices:
+            # quick and dirty (and very arbitrary) voice based on likely gender
+            if 'she' in msg.speaker.description.lower():
+                available_voices = ['alloy', 'nova', 'shimmer']
+            else:
+                available_voices = ['echo', 'onyx'] # fable is narrator
+
+            # Pick a random free voice
+            for used_voice in self._voices.values():
+                try:
+                    available_voices.remove(used_voice)
+                except ValueError:
+                    pass # Different gender, probably
+            self._voices[speaker] = available_voices[random.randint(0, len(available_voices) - 1)]
+        
+        _speak(self._voices[speaker], msg.text)
 
 _SENTIMENT_PROMPT = """Analyze the sentiment of the player character's latest response.
 
@@ -105,7 +146,8 @@ But now, a rebellion to overthrow the {scenario.ruler.title} {scenario.ruler.nam
 
 {faction.overview} {faction.beliefs} {faction.goals} {faction.needs} {faction.name} is {faction.alignment.value}.
 
-{player.name} has come to discuss something with them. They do not yet know why this is the case, but they do know tha {player.name} is suspected to be a rebel.
+{player.name} has come to discuss something with them. They do not yet know why this is the case, but they do know that {player.name} is a rebel leader.
+{player.name} is already quite famous, at least in right circles, for the deeds rebellion has done.
 
 {faction.name} is initially {_get_favor_text(faction.favor)}
 This the conversation between {player.name} and several of leaders of the faction."""
@@ -113,3 +155,15 @@ This the conversation between {player.name} and several of leaders of the factio
     # Convert NPCs to game characters TODO memoize for performance
     npcs = [npc.game_character() for npc in faction.npcs]
     return Dialogue(context, [player, *npcs])
+
+def _speak(voice: str, text: str) -> None:
+    response = tts_client.audio.speech.create(
+        model='canary-tts',
+        voice=voice,
+        response_format='opus',
+        input=text
+    )
+
+    # pydub's own audio playback is either broken on modern Python versions, or prints text to console
+    sound = pydub.AudioSegment.from_file(BytesIO(response.content), codec='opus')
+    sounddevice.play(numpy.frombuffer(sound.raw_data, dtype=numpy.int16), sound.frame_rate)
