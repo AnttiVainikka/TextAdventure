@@ -11,8 +11,8 @@ if TYPE_CHECKING:
     from Journey.Layout import Layout
 
 class IntroScene(Scene):
-    def __init__(self, parent: "Layout", area: Area, difficulty: Difficulty = Difficulty.Easy):
-        super().__init__(parent, area, difficulty)
+    def __init__(self, parent: "Layout", difficulty: Difficulty = Difficulty.Easy):
+        super().__init__(parent, None, difficulty)
         self._plays.append(IntroPlay(self, self._parent.name, self._parent.description, self._parent.capital, parent.mission.description))
 
     def _next(self) -> "IntroPlay":

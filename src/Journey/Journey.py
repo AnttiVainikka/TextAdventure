@@ -13,6 +13,7 @@ from Journey.LoopManager import LoopManager
 from Journey.BaseActionComponent import BaseActionComponent
 from Journey.Action import *
 from Journey.Layout import Layout
+from Journey.SiegeLayout import SiegeLayout
 from Journey.utility import to_dict, to_dict_index
 from Journey.CapitalLayout import CapitalLayout
 
@@ -30,6 +31,7 @@ class Journey(BaseActionComponent, LoopManager):
         self._capital_layout = CapitalLayout(self)
         self._layouts = [Layout(self, region.name, region.description, Journey._NUMBER_OF_AREAS)
                          for region in self._scenario.kingdom.regions]
+        self._siege = SiegeLayout(self, self._scenario.capital.name, self._scenario.capital.history, Journey._NUMBER_OF_AREAS)
         self._nr_finished_layouts = 0
 
         self._current_layout = None
@@ -48,8 +50,9 @@ class Journey(BaseActionComponent, LoopManager):
         self._nr_finished_layouts = state["number_of_finished_layouts"]
         self._capital_layout = CapitalLayout.create_from_dict(self, state["capital_layout"])
         self._layouts = [Layout.create_from_dict(self, layout_state) for layout_state in state["layouts"]]
+        self._siege = SiegeLayout.create_from_dict(self, state["siege"])
         self._current_layout = None if state["current_layout"] is None \
-                               else ([self._capital_layout] + self._layouts)[state["current_layout"]]
+                               else ([self._capital_layout, self._siege] + self._layouts)[state["current_layout"]]
 
 
     def to_dict(self) -> dict:
@@ -60,7 +63,8 @@ class Journey(BaseActionComponent, LoopManager):
             "number_of_finished_layouts": to_dict(self._nr_finished_layouts),
             "capital_layout": to_dict(self._capital_layout),
             "layouts": to_dict(self._layouts),
-            "current_layout": to_dict_index(self._current_layout, [self._capital_layout] + self._layouts)
+            "current_layout": to_dict_index(self._current_layout, [self._capital_layout, self._siege] + self._layouts),
+            "siege": to_dict(self._siege)
         }
 
     @property
