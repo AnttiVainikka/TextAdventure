@@ -6,6 +6,101 @@ from rich.layout import Layout
 from rich.panel import Panel
 from .battle_ui import clear_console
 
+def form_equipment_comparation_text(character, new_equipment):
+  current_equipment_text = ''
+  new_equipment_text = ''
+
+  if new_equipment.type == EquipmentType.Weapon:
+
+    current_equipment = character.weapon
+    new_has_better_physical = new_equipment.stats[0] > current_equipment.stats[0]
+    new_has_better_magical = new_equipment.stats[1] > current_equipment.stats[1]
+    current_has_better_physical = current_equipment.stats[0] > new_equipment.stats[0]
+    current_has_better_magical = current_equipment.stats[1] > new_equipment.stats[1]
+
+    current_equipment_text += ('Current weapon: ' + current_equipment.name + '\n')
+    new_equipment_text += ('New weapon: ' + new_equipment.name + '\n')
+
+    if (current_has_better_physical):
+      current_equipment_text += ('Physical damage: ' + '[green]' + str(current_equipment.stats[0]) + '\n')
+      new_equipment_text += ('Physical damage: ' + '[red]' + str(new_equipment.stats[0]) + '\n')
+    elif (new_has_better_physical):
+      current_equipment_text += ('Physical damage: ' + '[red]' + str(current_equipment.stats[0]) + '\n')
+      new_equipment_text += ('Physical damage: ' + '[green]' + str(new_equipment.stats[0]) + '\n')
+    else: #The equipment have equal physical damage
+      current_equipment_text += ('Physical damage: ' + str(current_equipment.stats[0]) + '\n')
+      new_equipment_text += ('Physical damage: ' + str(new_equipment.stats[0]) + '\n')
+
+    if (current_has_better_magical):
+      current_equipment_text += ('[white]Magical damage: ' + '[green]' + str(current_equipment.stats[1]) + '\n')
+      new_equipment_text += ('[white]Magical damage: ' + '[red]' + str(new_equipment.stats[1]) + '\n')
+    elif (new_has_better_magical):
+      current_equipment_text += ('[white]Magical damage: ' + '[red]' + str(current_equipment.stats[1]) + '\n')
+      new_equipment_text += ('[white]Magical damage: ' + '[green]' + str(new_equipment.stats[1]) + '\n')
+    else: #The equipment have equal magical damage
+      current_equipment_text += ('[white]Magical damage: ' + str(current_equipment.stats[1]) + '\n')
+      new_equipment_text += ('[white]Magical damage: ' + str(new_equipment.stats[1]) + '\n')
+
+    current_equipment_text += ('[white]Description: ' + current_equipment.description)
+    new_equipment_text += ('[white]Description: ' + new_equipment.description)
+    
+  else: #new_equipment.type == EquipmentType.Armour
+    current_equipment = character.armour
+    new_has_better_physical = new_equipment.stats[0] > current_equipment.stats[0]
+    new_has_better_magical = new_equipment.stats[1] > current_equipment.stats[1]
+    current_has_better_physical = current_equipment.stats[0] > new_equipment.stats[0]
+    current_has_better_magical = current_equipment.stats[1] > new_equipment.stats[1]
+
+    current_equipment_text += ('Current armour: ' + current_equipment.name + '\n')
+    new_equipment_text += ('New armour: ' + new_equipment.name + '\n')
+
+    if (current_has_better_physical):
+      current_equipment_text += ('Physical protection: ' + '[green]' + str(current_equipment.stats[0]) + '\n')
+      new_equipment_text += ('Physical protection: ' + '[red]' + str(new_equipment.stats[0]) + '\n')
+    elif (new_has_better_physical):
+      current_equipment_text += ('Physical protection: ' + '[red]' + str(current_equipment.stats[0]) + '\n')
+      new_equipment_text += ('Physical protection: ' + '[green]' + str(new_equipment.stats[0]) + '\n')
+    else: #The equipment have equal physical protection
+      current_equipment_text += ('Physical protection: ' + str(current_equipment.stats[0]) + '\n')
+      new_equipment_text += ('Physical protection: ' + str(new_equipment.stats[0]) + '\n')
+
+    if (current_has_better_magical):
+      current_equipment_text += ('[white]Magical protection: ' + '[green]' + str(current_equipment.stats[1]) + '\n')
+      new_equipment_text += ('[white]Magical protection: ' + '[red]' + str(new_equipment.stats[1]) + '\n')
+    elif (new_has_better_magical):
+      current_equipment_text += ('[white]Magical protection: ' + '[red]' + str(current_equipment.stats[1]) + '\n')
+      new_equipment_text += ('[white]Magical protection: ' + '[green]' + str(new_equipment.stats[1]) + '\n')
+    else: #The equipment have equal magical protection
+      current_equipment_text += ('[white]Magical protection: ' + str(current_equipment.stats[1]) + '\n')
+      new_equipment_text += ('[white]Magical protection: ' + str(new_equipment.stats[1]) + '\n')
+
+    current_equipment_text += ('[white]Description: ' + current_equipment.description)
+    new_equipment_text += ('[white]Description: ' + new_equipment.description)
+        
+
+
+  texts = [current_equipment_text, new_equipment_text]
+  return texts
+
+def view_item(equipment, character):
+  texts = form_equipment_comparation_text(character=character,
+                                          new_equipment=equipment)
+  current_equipment_text = texts[0]
+  new_equipment_text = texts[1]
+
+  layout = Layout()
+  layout.split_row(
+    Layout(Panel("",style="black"),size=2),
+    Layout(name="equipment"))
+  layout["equipment"].split_row(
+    Panel(current_equipment_text),
+    Panel(new_equipment_text)
+  )
+  clear_console()
+  print(layout)
+
+
+
 def construct_item_text(equipment):
   text = equipment.name
   if equipment.type == EquipmentType.Weapon:
