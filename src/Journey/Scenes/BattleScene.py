@@ -1,10 +1,13 @@
 from typing import TYPE_CHECKING
 
+from battle import battle
+
 from Characters.create import create_enemies
 from Characters.character import Character
 
 from Generation.area import Area
 from Generation.enemy_type import generate_epic_enemy, generate_from_region, EnemyType
+from Journey.Action import PlayFinishedAction, StartBattleAction
 
 from Journey.Scenes.Scene import Scene
 from Journey.Plays.BattlePlay import BattlePlay
@@ -27,6 +30,17 @@ class BattleScene(Scene):
         super().__init_from_dict__(parent, state)
         self._enemy_types = [EnemyType.create_from_dict(enemy_type) for enemy_type in state["enemy_types"]]
         self._leader = EnemyType.create_from_dict(state["leader"])
+
+    def _process_StartBattleAction(self, action: StartBattleAction):
+        play = action.play
+        if play == self._current_play:
+            real_enemy_types = self._enemy_types
+            if self._leader is not None:
+                real_enemy_types.append(self._leader)
+            enemies = create_enemies(self.parent.parent.character.level, self.difficulty.value, 
+                                     real_enemy_types)
+            battle(self.parent.parent.character, enemies)
+
 
     def to_dict(self) -> dict:
         state = super().to_dict()

@@ -110,6 +110,9 @@ class PlayAction(Action):
 class PlayFinishedAction(PlayAction):
     pass        
 
+class StartBattleAction(PlayAction):
+    pass
+
 class IntroLeaveAction(PlayAction):
     pass
 

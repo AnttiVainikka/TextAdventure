@@ -5,7 +5,7 @@ from Generation.battle_scene import *
 
 from Journey.Plays.Play import Play
 from Journey.Interaction import Interaction
-from Journey.Action import InteractionAnsweredAction, PlayFinishedAction
+from Journey.Action import InteractionAnsweredAction, PlayFinishedAction, StartBattleAction
 
 if TYPE_CHECKING:
     from Journey.Scenes.BattleScene import BattleScene
@@ -39,8 +39,8 @@ class BattlePlay(Play):
 
     def _process_InteractionAnsweredAction(self, action: InteractionAnsweredAction):
         interaction = action.interaction
-        if interaction == self._interactions[BattlePlay._INDEX_OUTRO]:
-            self._raise_action(PlayFinishedAction(self))
+        if interaction == self._interactions[BattlePlay._INDEX_INTRO]:
+            self._raise_action(StartBattleAction(self))
 
     def _next(self) -> Interaction:
         if self._current_interaction == self._interactions[BattlePlay._INDEX_INTRO]:
