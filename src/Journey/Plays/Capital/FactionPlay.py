@@ -1,4 +1,5 @@
 from io import BytesIO
+import os
 import random
 from typing import TYPE_CHECKING, Optional
 
@@ -17,9 +18,12 @@ from Journey.Action import InteractionAnsweredAction, PlayFinishedAction
 from llm.dialogue import Dialogue, Message
 
 from openai import OpenAI
-import pydub
-import sounddevice
-import pydub.playback
+
+ENABLE_SPEECH = True if os.environ.get('NPC_SPEECH', 'false') == 'true' else False
+if TYPE_CHECKING or ENABLE_SPEECH:
+    import pydub
+    import sounddevice
+    import pydub.playback
 
 tts_client = OpenAI()
 
@@ -92,30 +96,27 @@ class FactionPlay(Play):
         # TODO raise_action
         if self.favor <= -50:
             self._chat.add_note(f'{self._faction.name} will now ATTACK the player!')
-            print(self._chat.talk_npc().render())
-            return None
+            msg = self._chat.talk_npc()
+            is_end = True
         elif self.favor >= 50:
             self._chat.add_note(f'The player character has convinced {self._faction.name} to join the rebellion! They have received all they want from the player character.')
             msg = self._chat.talk_npc(instruction='The faction leader should tell the player character that they will join the rebellion.')
-            _speak('fable', msg.mannerisms)
-            sounddevice.wait() # Wait for narrator to finish
-            self._speak_msg(msg)
-            print(msg.render())
-            return None
+            is_end = True
         elif self._turns_left == 0:
             self._chat.add_note(f'{self._faction.name} is still {_get_favor_text(self.favor)}')
             self._chat.add_note('Their members are no longer interested in continuing this conversation.')
-            print(self._chat.talk_npc().render())
-            return None
+            msg = self._chat.talk_npc()
+            is_end = True
+        else:
+            # Let one of the NPCs talk
+            msg = self._chat.talk_npc()
 
-        # Let one of the NPCs talk
-        msg = self._chat.talk_npc()
         _speak('fable', msg.mannerisms)
         sounddevice.wait() # Wait for narrator to finish
         self._speak_msg(msg)
         # Don't wait for NPC to finish
 
-        interaction = Interaction(self, msg.render())
+        interaction = Interaction(self, msg.render(), is_end)
         self._current_interaction = interaction
         return interaction
     
@@ -174,6 +175,9 @@ This the conversation between {player.name} and several of leaders of the factio
     return Dialogue(context, [player, *npcs])
 
 def _speak(voice: str, text: str) -> None:
+    if not ENABLE_SPEECH:
+        return
+
     response = tts_client.audio.speech.create(
         model='canary-tts',
         voice=voice,
