@@ -110,11 +110,13 @@ class FactionPlay(Play):
         else:
             # Let one of the NPCs talk
             msg = self._chat.talk_npc()
+            is_end = False
 
-        _speak('fable', msg.mannerisms)
-        sounddevice.wait() # Wait for narrator to finish
-        self._speak_msg(msg)
-        # Don't wait for NPC to finish
+        if ENABLE_SPEECH:
+            _speak('fable', msg.mannerisms)
+            sounddevice.wait() # Wait for narrator to finish
+            self._speak_msg(msg)
+            # Don't wait for NPC to finish
 
         interaction = Interaction(self, msg.render(), is_end)
         self._current_interaction = interaction
@@ -175,9 +177,6 @@ This the conversation between {player.name} and several of leaders of the factio
     return Dialogue(context, [player, *npcs])
 
 def _speak(voice: str, text: str) -> None:
-    if not ENABLE_SPEECH:
-        return
-
     response = tts_client.audio.speech.create(
         model='canary-tts',
         voice=voice,
