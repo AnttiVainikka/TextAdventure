@@ -35,16 +35,19 @@ A rebellion has been brewing for a long time. Now, the time is right. The rebel 
 The attack takes place in center of the capital city. Here is its description:
 {scenario.capital.architecture} {scenario.capital.history}"""
         
-        for faction in player.allies:
+        ally_help = ''
+        for faction in self.parent.factions[:2]: # player.allies
             prompt = f"""{base_prompt}
 
 The rebel leader has brought their ally, {faction.name}, to help. {faction.overview} {faction.beliefs} {faction.goals} {faction.name} is {faction.alignment.value}.
 
 Write a short description about how {faction.name} will help the rebel leader:
 """
-            result = complete(prompt)
-            print(result)
-        return Mission(description='', quest_description='', objective='')
+            ally_help += '\n\n' + complete(prompt)
+        
+        desc = f"""This is it. The King's castle lies ahead. Your allies are ready.{ally_help}"""
+        print(desc)
+        return Mission(description=desc, quest_description='Overthrow the tyrant!', objective=f'{scenario.ruler.title} {scenario.ruler.name}')
 
     def _create_intro_scene(self) -> IntroScene:
         return IntroScene(self)

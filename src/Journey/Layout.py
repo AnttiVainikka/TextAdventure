@@ -148,7 +148,7 @@ class Layout(BaseLayout):
         areas = generate_areas(kingdom.name, self._name, self._description, self._mission.quest_description, number_of_areas)
         
         _logger.debug(f"Areas created:")
-        for (i, area) in enumerate(self._areas):
+        for (i, area) in enumerate(areas):
             _logger.debug(f"{i + 1}: {area.name} - {area.description}")
 
         return areas
@@ -166,9 +166,6 @@ class Layout(BaseLayout):
                                              Layout._SCENE_SELECTOR_LAMBDA)
 
         scenes = []
-        _logger.info(f"Creating intro scene for layout {self._name}")
-        scenes.append(IntroScene(self, area, Difficulty.Easy))
-
         for area in areas:
             scene_class = scene_selector()
             difficulty = difficulty_selector()
