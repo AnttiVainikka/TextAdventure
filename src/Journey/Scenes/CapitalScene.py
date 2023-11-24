@@ -76,8 +76,10 @@ class CapitalScene(Scene):
                     self._process_faction_selection(action.index)
 
     def _process_PlayFinishedAction(self, action: PlayFinishedAction):
-        action.play.stop()
-        self._current_play = self._play_main
+        play = action.play
+        if play in self._play_faction and play == self._current_play:
+            self._current_play.stop()
+            self._current_play = self._play_main
 
     def _process_main_selection(self, index: int):
         match index:
