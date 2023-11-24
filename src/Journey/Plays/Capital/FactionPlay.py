@@ -73,6 +73,12 @@ class FactionPlay(Play):
     def reset(self):
         raise RuntimeError('unimplemented')
 
+    def _process_InteractionAnsweredAction(self, action: InteractionAnsweredAction):
+        interaction = action.interaction
+        if interaction == self._current_interaction:
+            if self._current_interaction.is_info:
+                self._raise_action(PlayFinishedAction(self))
+
     def _next(self) -> Interaction:
         if self._current_interaction != None:
             if self._current_interaction.is_info:
