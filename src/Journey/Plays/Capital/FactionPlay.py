@@ -66,6 +66,7 @@ class FactionPlay(Play):
         self._chat = _init_dialogue(self._player, self.parent.parent.parent.scenario, self._faction, self._npcs)
         self._turns_left = state["turns_left"]
         self.favor = state["favor"]
+        self._voices = {}
 
     def has_next(self):
         return self._turns_left > 0
