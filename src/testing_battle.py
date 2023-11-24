@@ -2,7 +2,7 @@ from Characters.create import create_enemies
 from Generation.enemy_type import EnemyType, EnemyRarity
 from battle import battle
 
-test_enemy_type = [EnemyType("Goblin", "Jeff", "Nasty lookign goblin", EnemyRarity.Common)]
+test_enemy_type = [EnemyType("Goblin", "Jeff", "Nasty lookign goblin", EnemyRarity.Legendary)]
 
 player_party = create_enemies(25,8,test_enemy_type)
 for i in range(5,9):

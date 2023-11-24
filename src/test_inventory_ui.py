@@ -40,6 +40,6 @@ test_char = Character(kind="",
                       description="")
 test_char.weapon = test_epic
 test_char.armour = test_rare_armour
-#print_inventory(equipment=equipment_list)
-view_item(character=test_char, equipment=test_lege)
+print_inventory(equipment=equipment_list)
+#view_item(character=test_char, equipment=test_lege)
 #view_item(character=test_char, equipment=test_lege_armour)
