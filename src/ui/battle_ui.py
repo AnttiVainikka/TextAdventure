@@ -5,7 +5,7 @@ from rich.panel import Panel
 
 def construct_character_panel(fighter):
   return Panel(fighter.name + '\n' +
-                'HP:'+ str(fighter.stats["hp"]-fighter.lost_hp) +'/' + str(fighter.stats["hp"]) + '\n' + 
+                'HP:'+ str(fighter.stats["hp"]) +'/' + str(fighter.stats["hp"]+fighter.lost_hp) + '\n' + 
                 'lvl:'+ str(fighter.level))
 
 def construct_character_row(fighters: [], layout: Layout,relation: str):
@@ -25,14 +25,22 @@ def construct_character_row(fighters: [], layout: Layout,relation: str):
         construct_character_panel(fighters[1]),
         construct_character_panel(fighters[2])
       )
-    else : 
-      #Max number of fighters per side at a 
-      # single point in time is 4, can be changed
+    elif (len(fighters)==4):
       layout[relation].split_row(
         construct_character_panel(fighters[0]),
         construct_character_panel(fighters[1]),
         construct_character_panel(fighters[2]),
         construct_character_panel(fighters[3])
+      )
+    else : 
+      #Max number of fighters per side at a 
+      # single point in time is 5, can be changed
+      layout[relation].split_row(
+        construct_character_panel(fighters[0]),
+        construct_character_panel(fighters[1]),
+        construct_character_panel(fighters[2]),
+        construct_character_panel(fighters[3]),
+        construct_character_panel(fighters[4])
       )
 
 def clear_console():
@@ -41,15 +49,63 @@ def clear_console():
   else:
    os.system('cls')
 
-def print_battle_status(enemies :list, friends :list):
+def print_battle_status(enemies :list, friends :list, current_player,target):
     layout = Layout()
-    layout.split_column(
-      Layout(Panel("",style="black"),name="top_buffer",size=2),
-      Layout(name="enemies", size=10),
-      Layout(Panel("",style="black"),name="top_buffer",size=5),
-      Layout(name="allies", size=10)
-    )
+    counter = 0
+    if not target:
+      layout.split_column(
+        Layout(Panel("",style="black"),name="top_buffer",size=2),
+        Layout(name="enemies", size=10),
+        Layout(Panel("",style="black"),name="top_buffer",size=5),
+        Layout(name="allies", size=10),
+        Layout(Panel("[white]1:  Attack\n2:  Skill\n3:  Run\n4:  View\n", style="black"), size=6)
+      )
+    elif target == "all":
+      counter = 1
+      text = "[white]\n"
+      for p in friends:
+          text += f"{counter}:   {p.name} HP:{p.stats['hp']}/{p.stats['hp']+p.lost_hp} \n" 
+          counter += 1
+      for e in enemies:
+          text += f"{counter}:   {e.name} HP:{e.stats['hp']}/{e.stats['hp']+e.lost_hp} \n"
+          counter += 1
+      text += f"\n{counter}:  Back"
+      layout.split_column(
+        Layout(Panel("",style="black"),name="top_buffer",size=2),
+        Layout(name="enemies", size=10),
+        Layout(Panel("",style="black"),name="top_buffer",size=5),
+        Layout(name="allies", size=10),
+        Layout(Panel(text, style="black"), size=14)
+      )
+    elif target == "players":
+      counter = 1
+      text = "[white]\n"
+      for p in friends:
+          text += f"{counter}:   {p.name} HP:{p.stats['hp']}/{p.stats['hp']+p.lost_hp} \n" 
+          counter += 1
+      text += f"\n{counter}:  Back"
+      layout.split_column(
+        Layout(Panel("",style="black"),name="top_buffer",size=2),
+        Layout(name="enemies", size=10),
+        Layout(Panel("",style="black"),name="top_buffer",size=5),
+        Layout(name="allies", size=10),
+        Layout(Panel(text, style="black"), size=14)
+      )
+    elif target == "enemies":
+      counter = 1
+      text = "[white]\n"
+      for e in enemies:
+          text += f"{counter}:   {e.name} HP:{e.stats['hp']}/{e.stats['hp']+e.lost_hp} \n"
+          counter += 1
+      text += f"\n{counter}:  Back"
+      layout.split_column(
+        Layout(Panel("",style="black"),name="top_buffer",size=2),
+        Layout(name="enemies", size=10),
+        Layout(Panel("",style="black"),name="top_buffer",size=5),
+        Layout(name="allies", size=10),
+        Layout(Panel(text, style="black"), size=14)
+      )
     construct_character_row(fighters=enemies, layout=layout, relation="enemies")
     construct_character_row(fighters=friends, layout=layout, relation="allies")
-    clear_console()
     print(layout)
+    return counter

@@ -1,6 +1,8 @@
 from random import randint
 from time import sleep
 from Characters.equipment import EquipmentType
+from ui.battle_ui import print_battle_status
+from ui.inventory_ui import view_item, print_inventory
 def battle(players :list,enemies :list):
     """
     players: list consisting of player character and possible allies
@@ -33,29 +35,16 @@ def battle(players :list,enemies :list):
                 return "victory"
             if player.alive:
                 #Print the names, level and hp of all combatants at the start of every turn
-                print("\nYour Party")
-                for p in players:
-                    print(f"{p.name} LVL {p.level}:  HP: {p.stats['hp']}/{p.stats['hp']+p.lost_hp}")
-                print("\nEnemy Party")
-                for e in enemies:
-                    print(f"{e.name}: LVL {e.level}  HP: {e.stats['hp']}/{e.stats['hp']+e.lost_hp}")
-                print("\n")
                 while True: #breaks once player does an action successfully
-                    print("1:  Attack\n2:  Skill\n3:  Run\n4:  View\n")
+                    counter = print_battle_status(enemies, players, player,None)
                     #use item can be implemented later if we want to view, now only equipping is implemented
                     action = input(f"Choose action for {player.name}:  ")
                     while action not in ["1","2","3","4"]:
                         action = input("Please type 1, 2, 3 or 4:  ")
                     if action == "4":
-                        counter = 1
-                        print("\n")
-                        for p in players:
-                            print(f"{counter}:   {p.name} HP:{p.stats['hp']}/{p.stats['hp']+p.lost_hp}")
-                            counter += 1
-                        for e in enemies:
-                            print(f"{counter}:   {e.name} HP:{e.stats['hp']}/{e.stats['hp']+e.lost_hp}")
-                            counter += 1
-                        print(f"Back:  {counter}")
+                        
+                        
+                        counter = print_battle_status(enemies, players, player,"all")
                         try:
                             while True:
                                 target = int(input("Choose target:  "))
@@ -123,14 +112,10 @@ def battle(players :list,enemies :list):
                                     if player.alive:
                                         player.take_damage(heal)
                                         print(f"{player.name} was healed for {-heal}")
+                                        sleep(1.5)
                             else:
                                 # Promt player to select which character to heal
-                                counter = 1
-                                print("\n")
-                                for p in players:
-                                    print(f"{p.name} HP:{p.stats['hp']}/{p.stats['hp']+p.lost_hp}:  {counter}")
-                                    counter += 1
-                                print(f"Back:  {counter}")
+                                counter = print_battle_status(enemies, players, player,"players")
                                 try:
                                     while True:
                                         target = int(input("Choose target:  "))
@@ -147,6 +132,7 @@ def battle(players :list,enemies :list):
                                 if target.alive:
                                     target.take_damage(heal)
                                     print(f"{target.name} was healed for {-heal}")
+                                    sleep(1.5)
                                 else:
                                     print("Fallen characters cannot be healed")
                                     continue
@@ -162,16 +148,12 @@ def battle(players :list,enemies :list):
                                         if enemy.take_damage(damage) == "dead":
                                             print(f"{enemy.name} took {damage} damage and was defeated")
                                             dead_enemies += 1
+                                            sleep(1.5)
                                         else:
                                             print(f"{enemy.name} took {damage} damage")
                             else: # Skill is single target
                                 # Promt player to select which enemy to attack
-                                counter = 1
-                                print("\n")
-                                for enemy in enemies:
-                                    print(f"{enemy.name} HP:{enemy.stats['hp']}/{enemy.stats['hp']+enemy.lost_hp}:  {counter}")
-                                    counter += 1
-                                print(f"Back:  {counter}")
+                                counter = print_battle_status(enemies, players, player,"enemies")
                                 try:
                                     while True:
                                         target = int(input("Choose target:  "))
@@ -195,18 +177,15 @@ def battle(players :list,enemies :list):
                                         dead_enemies += 1
                                     else:
                                         print(f"{target.name} took {damage} damage")
+                                    sleep(1.5)
                                 else:
                                     print("Fallen enemies cannot be attacked")
                                     continue
                         skill.uses_remaining -= 1
                         break #getting to this line should mean a skill has been successfully used
                     else: # action is "3" as in a normal attack
-                        counter = 1
-                        print("\n")
-                        for enemy in enemies:
-                            print(f"{enemy.name} HP:{enemy.stats['hp']}/{enemy.stats['hp']+enemy.lost_hp}:  {counter}")
-                            counter += 1
-                        print(f"Back:  {counter}")
+    
+                        counter = print_battle_status(enemies, players, player,"enemies")
                         try:
                             while True:
                                 target = int(input("Choose target:  "))
@@ -227,6 +206,7 @@ def battle(players :list,enemies :list):
                                 dead_enemies += 1
                             else:
                                 print(f"{target.name} took {damage} damage")
+                            sleep(1.5)
                         else:
                             print("Fallen enemies cannot be attacked")
                             continue
@@ -277,9 +257,11 @@ def battle(players :list,enemies :list):
                                     if e.alive:
                                         e.take_damage(damage)
                                         print(f"{e.name} was healed for {-damage}")
+                                    sleep(1.5)
                             else:
                                 enemy_to_heal.take_damage(damage)
                                 print(f"{enemy_to_heal.name} was healed for {-damage}")
+                                sleep(1.5)
                         else:
                             if skill.stat == "atk":
                                 damage = max(1,damage-target.armour.stats[0])
@@ -290,6 +272,7 @@ def battle(players :list,enemies :list):
                                 dead_players += 1
                             else:
                                 print(f"{target.name} took {damage} damage")
+                            sleep(1.5)
                         if len(players) - dead_players <= 0:
                             return "defeat"
                         skill.uses_remaining -= 1
