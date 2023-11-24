@@ -38,9 +38,6 @@ class RiddleScene(Scene):
     def _next(self) -> "RiddlePlay":
         return self._plays[0]
 
-    def has_next(self) -> bool:
-        return self._current_play != self._plays[0]
-
     def _process_RiddleWrongAnswerAction(self, action: RiddleWrongAnswerAction):
         self._raise_action(DamageAction(self, RiddleScene._DIFFICULTY_TO_DAMAGE[self._difficulty]))
 

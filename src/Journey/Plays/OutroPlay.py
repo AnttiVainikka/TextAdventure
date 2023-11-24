@@ -14,13 +14,10 @@ class OutroPlay(Play):
         context = generate(region_name, mission, capital_name)
         self._interactions.append(Interaction(self, context, True))
 
-    def _process_InteractionAnswered(self, action: InteractionAnsweredAction):
+    def _process_InteractionAnsweredAction(self, action: InteractionAnsweredAction):
         interaction = action.interaction
         if interaction == self._interactions[0]:
             self._raise_action(PlayFinishedAction(self))
-
-    def has_next(self) -> bool:
-        return self._current_interaction != self._interactions[0]
 
     def _next(self) -> Interaction:
         return self._interactions[0]

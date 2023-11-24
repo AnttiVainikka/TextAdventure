@@ -1,10 +1,11 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, fields, is_dataclass
 from enum import Enum
 import functools
 from multiprocessing.pool import ThreadPool
 from Generation.generator import llm_create
 from Generation.npc import Character, create_npcs
 from Generation.scenario import Scenario
+from Journey.utility import to_dict
 
 class InitialStance(Enum):
     FRIENDLY = 'friendly towards the rebellion (our hero will just need to ask)'
@@ -37,6 +38,25 @@ class Faction:
     npcs: list[Character]
     favor: int
 
+    @property
+    def __dict__(self): # Had to override this because of the enum
+        return to_dict(self)
+
+def from_dict(state: dict) -> Faction:
+    return _from_dict(state, Faction)
+
+def _from_dict(state, type):
+    if getattr(type, "__origin__", None) == list:
+        inner_type = getattr(type, "__args__", [])[0]
+        return [_from_dict(inner_state, inner_type) for inner_state in state]
+    if issubclass(type, Enum): return type(state)
+    if not is_dataclass(type): return state
+    real_state = {}
+    for key, value in state.items():
+        field_type = next(field for field in fields(type) if field.name == key).type
+        real_state[key] = _from_dict(value, field_type)
+    return type(**real_state)
+
 def _create_faction(scenario: Scenario, power: int, stance: InitialStance, alignment: Alignment, count=1):
     if power < 10:
         power_level = 'insignificant in grand scale'
@@ -51,13 +71,13 @@ def _create_faction(scenario: Scenario, power: int, stance: InitialStance, align
 
     match stance:
         case InitialStance.FRIENDLY:
-            favor = 100
+            favor = 35
         case InitialStance.NEUTRAL:
             favor = 0
         case InitialStance.SUSPICIOUS:
-            favor = -50
+            favor = -25
         case InitialStance.HOSTILE:
-            favor = -100
+            favor = -50
 
     results = llm_create('faction', count,
                capital_name=scenario.capital.name,

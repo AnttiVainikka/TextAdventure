@@ -8,21 +8,25 @@ from Journey.Action import ActionConcern
 from Journey.Difficulty import Difficulty
 from Journey.Plays import create_from_dict as create_play
 from Journey.utility import to_dict, to_dict_index
+from Journey.Action import PlayFinishedAction, SceneFinishedAction
+from Journey.LoopManager import LoopManager
 
 if TYPE_CHECKING:
     from Journey.Plays.Play import Play
     from Journey.Layout import Layout
 
-class Scene(BaseActionComponent):
+class Scene(BaseActionComponent, LoopManager):
     def __init__(self, parent: "Layout", area: Area, difficulty: "Difficulty"):
-        super().__init__(parent, ActionConcern.Scene)
+        BaseActionComponent.__init__(self, parent, ActionConcern.Scene)
+        LoopManager.__init__(self)
         self._area = area
         self._difficulty: Difficulty = difficulty
         self._plays: list[Play] = []
         self._current_play: Play = None
 
     def __init_from_dict__(self, parent: "Layout", state: dict):
-        super().__init__(parent, ActionConcern.Scene)
+        BaseActionComponent.__init__(self, parent, ActionConcern.Scene)
+        LoopManager.__init__(self)
         self._area = Area(**state["area"]) if state["area"] is not None else None
         self._difficulty = Difficulty[state["difficulty"]]
         self._plays = [create_play(self, play_state) for play_state in state["plays"]]
@@ -47,28 +51,27 @@ class Scene(BaseActionComponent):
         return self._difficulty
 
     @property
-    def is_finished(self) -> bool:
-        return self._current_play is not None and self._current_play.is_finished and \
-               not self.has_next()
-
-    @property
     def play(self) -> "Play":
         return self._current_play
 
+    def _do_work(self):
+        play = self.next()
+        play.run()
+
     def next(self) -> "Play":
-        if (self._current_play is None or
-           (self._current_play.is_finished and self.has_next())):
-            self._current_play = self._next()
+        self._current_play = self._next()
         return self._current_play
     
-    def reset(self):
-        self._current_play = None
-        for play in self._plays:
-            play.reset()
+    def stop(self):
+        self._current_play.stop()
+        super().stop()
 
-    @abstractmethod
-    def has_next(self) -> bool:
-        pass
+    def _process_PlayFinishedAction(self, action: PlayFinishedAction):
+        play = action.play
+        if play == self._current_play:
+            self._current_play.stop()
+            if len(self._plays) == 1:
+                self._raise_action(SceneFinishedAction(self))
 
     @abstractmethod
     def _next(self) -> "Play":

@@ -59,10 +59,6 @@ class RestPlay(Play):
     def _interaction_leave(self) -> "Interaction":
         return self._interactions[RestPlay._INDEX_LEAVE]
 
-    def has_next(self) -> bool:
-        return self._current_interaction != self._interaction_rest and \
-               self._current_interaction != self._interaction_leave
-
     def _process_InteractionAnsweredAction(self, action: InteractionAnsweredAction):
         interaction = action.interaction
         if interaction == self._interaction_context:

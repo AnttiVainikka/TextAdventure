@@ -6,7 +6,7 @@ from Generation.enemy_type import EnemyType
 
 from Journey.Plays.Play import Play
 from Journey.Interaction import Interaction
-from Journey.Action import InteractionAnsweredAction
+from Journey.Action import InteractionAnsweredAction, PlayFinishedAction
 
 if TYPE_CHECKING:
     from Journey.Scenes.FinalBattleScene import FinalBattleScene
@@ -32,7 +32,9 @@ class FinalBattlePlay(Play):
         self._interactions.append(Interaction(self, outro_context_p2, True))
 
     def _process_InteractionAnsweredAction(self, action: InteractionAnsweredAction):
-        pass
+        interaction = action.interaction
+        if interaction == self._interaction_outro_p2:
+            self._raise_action(PlayFinishedAction(self))
 
     @property
     def _interaction_intro_p1(self) -> "Interaction":
@@ -49,9 +51,6 @@ class FinalBattlePlay(Play):
     @property
     def _interaction_outro_p2(self) -> "Interaction":
         return self._interactions[FinalBattlePlay._INDEX_OUTRO_P2]
-
-    def has_next(self) -> bool:
-        return self._current_interaction != self._interaction_outro_p2
 
     def _next(self, ) -> Interaction:
         match self._current_interaction:
