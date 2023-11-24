@@ -100,6 +100,10 @@ class MoveToRegionAction(SceneAction):
         super().__init__(scene, ActionConcern.Journey)
         self.region = region
 
+class BeginSiegeAction(SceneAction):
+    def __init__(self, scene: "Scene"):
+        super().__init__(scene, ActionConcern.Journey)
+
 ################
 ##### PLAY #####
 class PlayAction(Action):

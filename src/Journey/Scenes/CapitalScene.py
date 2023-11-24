@@ -83,6 +83,9 @@ class CapitalScene(Scene):
             case CapitalScene.MainChoice.SELECT_FACTION.value:
                 self._current_play = self._play_faction_selection
 
+            case 3:
+                self._raise_action(BeginSiegeAction(self))
+
             case _:
                 self._current_play = None
 

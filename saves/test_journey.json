@@ -447,7 +447,8 @@
                                 "is_info": false,
                                 "possible_answers": {
                                     "1": "Select region...",
-                                    "2": "Select faction..."
+                                    "2": "Select faction...",
+                                    "3": "Begin siege"
                                 }
                             }
                         ],

@@ -127,3 +127,7 @@ class Journey(BaseActionComponent, LoopManager):
     def _process_ReturnToCapitalAction(self, action: ReturnToCapitalAction):
         self._current_layout.stop()
         self._current_layout = self._capital_layout
+
+    def _process_BeginSiegeAction(self, action: BeginSiegeAction):
+        self._current_layout.stop()
+        self._current_layout = self._siege
