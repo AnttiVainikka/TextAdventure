@@ -36,7 +36,7 @@ The attack takes place in center of the capital city. Here is its description:
 {scenario.capital.architecture} {scenario.capital.history}"""
         
         ally_help = ''
-        for faction in self.parent.factions[:2]: # player.allies
+        for faction in player.allies:
             prompt = f"""{base_prompt}
 
 The rebel leader has brought their ally, {faction.name}, to help. {faction.overview} {faction.beliefs} {faction.goals} {faction.name} is {faction.alignment.value}.

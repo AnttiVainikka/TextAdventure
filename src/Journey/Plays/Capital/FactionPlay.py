@@ -116,6 +116,7 @@ class FactionPlay(Play):
             msg = self._chat.talk_npc(instruction='The faction leader should tell the player character that they will join the rebellion.')
             is_end = True
             self._player.allies.append(self._faction)
+            self._player.party_members.append(self._npcs[0])
         elif self._turns_left == 0:
             self._chat.add_note(f'{self._faction.name} is still {_get_favor_text(self.favor)}')
             self._chat.add_note('Their members are no longer interested in continuing this conversation.')

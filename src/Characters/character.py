@@ -8,6 +8,7 @@ if TYPE_CHECKING:
 
 class Character():
     allies: list['Faction']
+    party_members: list['Character']
 
     def __init__(self, kind :str, name :str, stats :dict, multipliers :int, description :str, type :str = "Warrior", race :str = "Human"):
         """ Used for both playable and npc characters. """
@@ -28,7 +29,8 @@ class Character():
         self.enemy = False #change to True if npc turns hostile to player
         self.type = type
         self.inventory = []
-        self.allies = []
+        self.allies = [] # factions
+        self.party_members = []
         # self.skillset could be implemented to have character learn specific skills
         # at specific levels
     
@@ -51,6 +53,7 @@ class Character():
         self.race = state["race"]
         self.inventory = [Equipment.create_from_dict(equipment) for equipment in state["inventory"]]
         self.allies = [] # ???
+        self.party_members = []
 
     def create_from_dict(state: dict) -> "Character":
         if state is None: return None

@@ -39,7 +39,7 @@ class BattleScene(Scene):
                 real_enemy_types.append(self._leader)
             enemies = create_enemies(self.parent.parent.character.level, self.difficulty.value, 
                                      real_enemy_types)
-            battle(self.parent.parent.character, enemies)
+            battle([self.parent.parent.character, *self.parent.parent.character.party_members], enemies)
 
 
     def to_dict(self) -> dict:
