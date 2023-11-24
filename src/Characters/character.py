@@ -1,8 +1,14 @@
+from typing import TYPE_CHECKING
 from Characters.equipment import Equipment, EquipmentType
 from Journey.utility import to_dict
 from Characters.skill import Skill
 
+if TYPE_CHECKING:
+    from Generation.faction import Faction
+
 class Character():
+    allies: list['Faction']
+
     def __init__(self, kind :str, name :str, stats :dict, multipliers :int, description :str, type :str = "Warrior", race :str = "Human"):
         """ Used for both playable and npc characters. """
         self.kind = kind
@@ -22,6 +28,7 @@ class Character():
         self.enemy = False #change to True if npc turns hostile to player
         self.type = type
         self.inventory = []
+        self.allies = []
         # self.skillset could be implemented to have character learn specific skills
         # at specific levels
     
@@ -43,6 +50,7 @@ class Character():
         self.type = state["type"]
         self.race = state["race"]
         self.inventory = [Equipment.create_from_dict(equipment) for equipment in state["inventory"]]
+        self.allies = [] # ???
 
     def create_from_dict(state: dict) -> "Character":
         if state is None: return None

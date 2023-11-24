@@ -16,6 +16,7 @@ pydantic = "^2.4.2"
 numpy = "^1.26.1"
 pydub = "^0.25.1"
 sounddevice = "^0.4.6"
+rich = "^13.7.0"
 
 [build-system]
 requires = ["poetry-core"]

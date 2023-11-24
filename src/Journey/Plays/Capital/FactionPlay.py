@@ -5,10 +5,9 @@ from typing import TYPE_CHECKING, Optional
 
 import numpy
 from Generation.faction import Faction
-from Generation.npc import Character
 from Generation.scenario import Scenario
 
-from Characters.character import Character as RealCharacter #?
+from Characters.character import Character
 
 from Journey.Plays.Play import Play
 from Journey.Interaction import Interaction
@@ -47,7 +46,9 @@ class FactionPlay(Play):
         self._chat = _init_dialogue(player, scenario, faction, self._npcs)
         self._voices = {}
         self._turns_left = 10
-        self.favor = faction.favor
+        self.favor = faction.favor + (player.level - 1) * 10
+        for ally in player.allies:
+            self.favor = ally.power_value // 2
 
     def to_dict(self) -> dict:
         state = super().to_dict()
@@ -61,7 +62,7 @@ class FactionPlay(Play):
         super().__init_from_dict__(parent, state)
         self._player = self.parent.parent.parent.character # This is disgusting, solve it later
         self._faction = self.parent.parent.parent.factions[state["faction"]] # Same
-        self._npcs = [RealCharacter.create_from_dict(character) for character in state["npcs"]]
+        self._npcs = [Character.create_from_dict(character) for character in state["npcs"]]
         self._chat = _init_dialogue(self._player, self.parent.parent.parent.scenario, self._faction, self._npcs)
         self._turns_left = state["turns_left"]
         self.favor = state["favor"]
@@ -74,6 +75,10 @@ class FactionPlay(Play):
 
     def _next(self) -> Interaction:
         if self._current_interaction != None:
+            if self._current_interaction.is_info:
+                self._raise_action(PlayFinishedAction(self))
+                return self._current_interaction
+
             # Append player's reply to dialogue thread and analyze the sentiment in it
             self._chat.talk_player(self._player, self._current_interaction.answer)
             sentiment = self._chat.analyze(_SENTIMENT_PROMPT).lower()
@@ -92,8 +97,10 @@ class FactionPlay(Play):
             if old_favor_text != new_favor_text:
                 self._chat.add_note(f'{self._faction.name} is now {_get_favor_text(self.favor)}')
 
+            if self._current_interaction.answer == 'MIND CONTROL':
+                self.favor += 100
+
         self._turns_left -= 1
-        # TODO raise_action
         if self.favor <= -50:
             self._chat.add_note(f'{self._faction.name} will now ATTACK the player!')
             msg = self._chat.talk_npc()
@@ -102,6 +109,7 @@ class FactionPlay(Play):
             self._chat.add_note(f'The player character has convinced {self._faction.name} to join the rebellion! They have received all they want from the player character.')
             msg = self._chat.talk_npc(instruction='The faction leader should tell the player character that they will join the rebellion.')
             is_end = True
+            self._player.allies.append(self._faction)
         elif self._turns_left == 0:
             self._chat.add_note(f'{self._faction.name} is still {_get_favor_text(self.favor)}')
             self._chat.add_note('Their members are no longer interested in continuing this conversation.')
