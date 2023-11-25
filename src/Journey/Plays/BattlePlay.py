@@ -41,6 +41,8 @@ class BattlePlay(Play):
         interaction = action.interaction
         if interaction == self._interactions[BattlePlay._INDEX_INTRO]:
             self._raise_action(StartBattleAction(self))
+        elif interaction == self._interactions[BattlePlay._INDEX_OUTRO]:
+            self._raise_action(PlayFinishedAction(self))
 
     def _next(self) -> Interaction:
         if self._current_interaction == self._interactions[BattlePlay._INDEX_INTRO]:

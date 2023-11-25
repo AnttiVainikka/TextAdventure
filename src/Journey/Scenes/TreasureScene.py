@@ -23,10 +23,10 @@ if TYPE_CHECKING:
 
 class TreasureScene(Scene):
     _DIFFICULTY_TO_DAMAGE = {
-        Difficulty.Easy: 1,
-        Difficulty.Normal: 3,
-        Difficulty.Hard: 5,
-        Difficulty.Challenging: 10
+        Difficulty.Easy: 0.01,
+        Difficulty.Normal: 0.03,
+        Difficulty.Hard: 0.05,
+        Difficulty.Challenging: 0.1
     }
 
     def __init__(self, parent: "Layout", area: Area, difficulty: "Difficulty"):
@@ -37,12 +37,12 @@ class TreasureScene(Scene):
         character: Character = parent.parent.character # This looks awful
         match randint(0, 2):
             case 0:
-                self._possible_loot = create_random_equipment(character.type, character.race, "", character.level, EquipmentRarity(difficulty.value).value)
+                self._possible_loot = create_random_equipment(character.type, character.race, "", character.level, EquipmentRarity(difficulty.value + 1).value)
                 self._plays.append(FreeTreasurePlay(self, parent.name, parent.description, area, str(self._possible_loot)))
             case 1:
                 self._plays.append(TrapTreasurePlay(self, parent.name, parent.description, area))
             case 2:
-                self._possible_loot = create_random_equipment(character.type, character.race, "", character.level, EquipmentRarity(difficulty.value).value)
+                self._possible_loot = create_random_equipment(character.type, character.race, "", character.level, EquipmentRarity(difficulty.value + 1).value)
                 self._plays.append(SacrificeTreasurePlay(self, parent.name, parent.description, area, str(self._possible_loot)))
 
     def __init_from_dict__(self, parent: "Layout", state: dict):

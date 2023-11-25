@@ -6,7 +6,7 @@ from Generation.enemy_type import EnemyType
 
 from Journey.Plays.Play import Play
 from Journey.Interaction import Interaction
-from Journey.Action import InteractionAnsweredAction, PlayFinishedAction
+from Journey.Action import InteractionAnsweredAction, PlayFinishedAction, StartBattleAction
 
 if TYPE_CHECKING:
     from Journey.Scenes.FinalBattleScene import FinalBattleScene
@@ -33,7 +33,11 @@ class FinalBattlePlay(Play):
 
     def _process_InteractionAnsweredAction(self, action: InteractionAnsweredAction):
         interaction = action.interaction
-        if interaction == self._interaction_outro_p2:
+        if interaction == self._interaction_intro_p1:
+            self._raise_action(StartBattleAction(self))
+        elif interaction == self._interaction_intro_p2:
+            self._raise_action(StartBattleAction(self))
+        elif interaction == self._interaction_outro_p2:
             self._raise_action(PlayFinishedAction(self))
 
     @property

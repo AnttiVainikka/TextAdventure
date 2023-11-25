@@ -104,6 +104,10 @@ class BeginSiegeAction(SceneAction):
     def __init__(self, scene: "Scene"):
         super().__init__(scene, ActionConcern.Journey)
 
+class ReturnMainMenuAction(SceneAction):
+    def __init__(self, scene: "Scene"):
+        super().__init__(scene, ActionConcern.Journey)
+
 ################
 ##### PLAY #####
 class PlayAction(Action):

@@ -23,11 +23,13 @@ class CapitalScene(Scene):
     class MainChoice(Enum):
         SELECT_REGION = 1
         SELECT_FACTION = 2
+        BEGIN_SIEGE = 3
 
     _MAIN_QUESTION = "Where do you want to go?"
     _MAIN_CHOICES = {
         MainChoice.SELECT_REGION.value: "Select region...",
-        MainChoice.SELECT_FACTION.value: "Select faction..."
+        MainChoice.SELECT_FACTION.value: "Select faction...",
+        MainChoice.BEGIN_SIEGE.value: "Begin siege"
     }
 
     _REGION_QUESTION = "Where do you want to go?"
@@ -35,7 +37,8 @@ class CapitalScene(Scene):
 
     def __init__(self, parent: "Layout", factions: list[Faction], regions: list[str]):
         super().__init__(parent, None, Difficulty.Easy)
-        self._plays.append(SelectionPlay(self, CapitalScene._MAIN_QUESTION, CapitalScene._MAIN_CHOICES))
+        self._plays.append(SelectionPlay(self, CapitalScene._MAIN_QUESTION, CapitalScene._MAIN_CHOICES,
+                                         back=(0, "Return to main menu")))
         self._plays.append(SelectionPlay(self, CapitalScene._FACTION_QUESTION, [faction.name for faction in factions]))
         self._plays.append(SelectionPlay(self, CapitalScene._REGION_QUESTION, regions))
         for faction in factions:
@@ -83,13 +86,16 @@ class CapitalScene(Scene):
 
     def _process_main_selection(self, index: int):
         match index:
+            case 0:
+                self._raise_action(ReturnMainMenuAction(self))
+
             case CapitalScene.MainChoice.SELECT_REGION.value:
                 self._current_play = self._play_region_selection
 
             case CapitalScene.MainChoice.SELECT_FACTION.value:
                 self._current_play = self._play_faction_selection
 
-            case 3:
+            case CapitalScene.MainChoice.BEGIN_SIEGE.value:
                 self._raise_action(BeginSiegeAction(self))
 
             case _:

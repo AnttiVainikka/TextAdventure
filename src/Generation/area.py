@@ -18,7 +18,15 @@ def generate(kingdom_name: str, region_name: str, region_description: str, missi
     for area_string in area_strings:
         splits = area_string.split(":", 1)
         if len(splits) == 2:
-            name = splits[0]
+            name:str = splits[0]
             description = splits[1]
+            name.lstrip()
+            description.lstrip()
+            while name[0].isdigit():
+                name = name[1:]
+
+            if name[0] == ".":
+                name = name[1:]
+
             areas.append(Area(name, description))
     return areas

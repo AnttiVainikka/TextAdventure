@@ -16,8 +16,8 @@ if TYPE_CHECKING:
     from Journey.Scenes.IntroScene import IntroScene
 
 class IntroChoice(Enum):
+    RETURN = 0
     ENTER = 1
-    RETURN = 2
 
 class IntroPlay(Play):
     def __init__(self, parent: "IntroScene", region_name: str, region_description: str, capital_name: str, mission: str):

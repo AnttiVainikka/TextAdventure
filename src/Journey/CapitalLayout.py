@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 import time
+import UI
 
 from Journey.BaseLayout import BaseLayout
 from Journey.BaseActionComponent import BaseActionComponent, ActionConcern
@@ -32,3 +33,14 @@ class CapitalLayout(BaseLayout):
 
     def _first_scene(self) -> CapitalScene:
         return self._scenes[0]
+    
+    def _start(self):
+        text = UI.Text(UI.create_figlet_text(self.parent.capital, font="epic", width=UI.console.width), style="red")
+        text += "-"*UI.console.width
+        UI.rollback_manager.add(self, text)
+        UI.rollback_manager.set_level(self)
+        UI.rollback()
+
+    def _restart(self):
+        UI.rollback_manager.set_level(self)
+        UI.rollback()

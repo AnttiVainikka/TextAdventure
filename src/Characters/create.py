@@ -60,13 +60,13 @@ def create_enemies(level: int, difficulty: int, enemy_types: list[EnemyType]):
 
     enemies = []
     # We only add 1 Epic type of enemy
-    if sorted_enemy_types[0].rarity == EnemyRarity.Epic:
+    if sorted_enemy_types[-1].rarity == EnemyRarity.Epic:
         enemies.append(create_character(sorted_enemy_types[0].name,
                                         sorted_enemy_types[0].description,
                                         get_cls(),
                                         get_level(EnemyRarity.Epic.value),
                                         sorted_enemy_types[0].rarity.value))
-        sorted_enemy_types = sorted_enemy_types[1:]
+        sorted_enemy_types = sorted_enemy_types[:-1]
         difficulty -= EnemyRarity.Epic.value
 
     while difficulty > 0 and len(enemies) != _MAX_NUMBER_OF_ENEMIES:

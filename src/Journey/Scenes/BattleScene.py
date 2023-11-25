@@ -14,6 +14,10 @@ from Journey.Plays.BattlePlay import BattlePlay
 from Journey.Difficulty import Difficulty
 from Journey.utility import to_dict
 
+import log
+
+_logger = log.getLogger(__name__)
+
 if TYPE_CHECKING:
     from Journey.Layout import Layout
 
@@ -37,9 +41,9 @@ class BattleScene(Scene):
             real_enemy_types = self._enemy_types
             if self._leader is not None:
                 real_enemy_types.append(self._leader)
-            enemies = create_enemies(self.parent.parent.character.level, self.difficulty.value, 
+            enemies = create_enemies(self.parent.parent.character.level, 3 * self.difficulty.value, 
                                      real_enemy_types)
-            battle([self.parent.parent.character, *self.parent.parent.character.party_members], enemies)
+            result = battle([self.parent.parent.character, *self.parent.parent.character.party_members], enemies)
 
 
     def to_dict(self) -> dict:

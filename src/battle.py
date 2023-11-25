@@ -4,6 +4,10 @@ from Characters.equipment import EquipmentType
 from ui.battle_ui import print_battle_status
 from ui.character_ui import print_character_view
 from ui.inventory_ui import view_item, print_inventory
+import log
+
+_logger = log.getLogger(__name__)
+
 def battle(players :list,enemies :list):
     """
     players: list consisting of player character and possible allies
@@ -16,6 +20,9 @@ def battle(players :list,enemies :list):
     """
     dead_enemies = 0
     dead_players = 0
+    _logger.info(f"Number of players: {len(players)}")
+    _logger.info(f"Number of enemies: {len(enemies)}")
+
     while True: #Loop that breaks when all enemies or players are dead
         #Ask the player to take action with each ally character
         for player in players:

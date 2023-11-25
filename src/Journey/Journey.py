@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 import time
+import UI
 
 from Generation.scenario import Scenario, Kingdom, from_dict as scenario_from_dict
 from Generation.faction import Faction, from_dict as faction_from_dict
@@ -131,4 +132,21 @@ class Journey(BaseActionComponent, LoopManager):
     def _process_BeginSiegeAction(self, action: BeginSiegeAction):
         self._current_layout.stop()
         # self._current_layout = self._siege
-        self._current_layout = SiegeLayout(self, '', '', '')
+        self._current_layout = self._siege
+
+    def _process_ReturnMainMenuAction(self, action: ReturnMainMenuAction):
+        self._current_layout.stop()
+        self.stop()
+
+    def _start(self):
+        UI.clear()
+        UI.print(UI.create_figlet_text(self.scenario.kingdom.name, font="epic", width=UI.console.width), style="red")
+        UI.print("-"*UI.console.width, style="red")
+        UI.print(UI.scenario_to_string(self.scenario))
+        val = UI.Menu("Do you want to start the game?", [
+            UI.MenuOption("Start", 1)
+        ], UI.MenuOption("back", 2), integrated=True).select()
+        
+        if val == 2:
+            self.stop()
+            

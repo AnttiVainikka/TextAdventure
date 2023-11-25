@@ -105,7 +105,6 @@ class RiddlePlay(Play):
                 return self._interaction_good_answer
             
             case self._current_interaction if self._current_interaction in self._wrong_interactions:
-                self._interaction_riddle.start()
                 return self._interaction_riddle
 
     def _check_answer(self) -> bool:

@@ -37,6 +37,7 @@ class Equipment():
         self.description = state["description"]
 
     def create_from_dict(state: dict) -> "Equipment":
+        if state is None: return None
         equipment = Equipment.__new__(Equipment)
         equipment.__init_from_dict__(state)
         return equipment

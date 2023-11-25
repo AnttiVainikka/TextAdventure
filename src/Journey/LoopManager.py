@@ -6,13 +6,13 @@ class LoopManager(ABC):
         self._first_start = True
 
     def run(self):
+        self._in_progress = True
         if self._first_start:
             self._start()
             self._first_start = False
         else:
             self._restart()
 
-        self._in_progress = True
         while self._in_progress:
             self._do_work()
 

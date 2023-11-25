@@ -1,24 +1,25 @@
-import sys
-from Characters.character import Character
-from Journey.Plays.Capital.FactionPlay import FactionPlay
-from world import load_world
+from rich.console import Console
+from rich.panel import Panel
+import time
 
-world = load_world(sys.argv[1])
+# Create two Console instances
+console1 = Console()
+console2 = Console()
 
-print('Select a faction:')
-for i, faction in enumerate(world.factions):
-    print(f'{i}. {faction.name} ({faction.alignment.name}, favor: {faction.favor})')
+# Content for each part of the window
+content1 = "This is the content for the first part of the window."
+content2 = "This is the content for the second part of the window."
 
-faction = world.factions[int(input('Faction: '))]
+# Render each part in a Panel
+panel1 = Panel(content1, border_style="blue")
+panel2 = Panel(content2, border_style="green")
 
-player = Character('pc', 'Ina', {}, 1, "Ina is the hero of an rebellion soon to come.")
+# Print the panels to their respective consoles
+#console1.print(panel1)
+#console2.print(panel2)
 
-
-faction_play = FactionPlay(None, player, world.scenario, faction)
-while faction_play.has_next():
-    interaction = faction_play.next()
-    if interaction == None:
-        break
-    print(interaction)
-    interaction(input("Ina (you): "))
-    print(f'favor: {faction_play.favor}')
+while True:
+    console1.print("console1: LOFASZ")
+    time.sleep(3)
+    console2.print("console2: ASZLOF")
+    time.sleep(3)

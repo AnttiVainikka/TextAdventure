@@ -3,5 +3,4 @@ The context so far is the following:
 {{intro_context}}
 
 Here, the player needs to solve a riddle. Generate a {{riddle_difficulty}} riddle for the player.
-
-Try to consider the fact that this a fantasy world.
+Please don't choose "echo" as an answer.

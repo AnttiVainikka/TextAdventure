@@ -46,7 +46,6 @@ Write a short description about how {faction.name} will help the rebel leader:
             ally_help += '\n\n' + complete(prompt)
         
         desc = f"""This is it. The King's castle lies ahead. Your allies are ready.{ally_help}"""
-        print(desc)
         return Mission(description=desc, quest_description='Overthrow the tyrant!', objective=f'{scenario.ruler.title} {scenario.ruler.name}')
 
     def _create_intro_scene(self) -> IntroScene:

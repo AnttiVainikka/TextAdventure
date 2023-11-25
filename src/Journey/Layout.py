@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 from random import randint
+import UI
 
 from Generation.area import Area, generate as generate_areas
 from Generation.scenario import Kingdom
@@ -80,12 +81,12 @@ class Layout(BaseLayout):
         return layout
 
     def to_dict(self) -> dict:
-        return {
-            "name": to_dict(self._name),
-            "description": to_dict(self._description),
-            "mission": to_dict(self._mission),
-            "areas": [to_dict(area) for area in self._areas]
-        }
+        state = super().to_dict()
+        state["name"] = to_dict(self._name)
+        state["description"] = to_dict(self._description)
+        state["mission"] = to_dict(self._mission)
+        state["areas"] = [to_dict(area) for area in self._areas]
+        return state
     
     def _first_scene(self) -> "Scene":
         return self._scenes[0]
@@ -155,7 +156,7 @@ class Layout(BaseLayout):
     
     def _create_intro_scene(self) -> IntroScene:
         _logger.info(f"Creating {IntroScene.__name__} for layout {self._name}")
-        self._scenes.append(IntroScene(self, Difficulty.Easy))
+        return IntroScene(self, Difficulty.Easy)
 
     def _create_random_scenes(self, areas: list[Area]) -> list[Scene]:
         # Creating scenes
@@ -189,4 +190,15 @@ class Layout(BaseLayout):
     
     def _create_outro_scene(self) -> OutroScene:
         _logger.info(f"Creating {OutroScene.__name__} for layout {self._name}")
-        self._scenes.append(OutroScene(self))
+        return OutroScene(self)
+
+    def _start(self):
+        text = UI.Text(UI.create_figlet_text(self.name, font="epic", width=UI.console.width), style="red")
+        text += "-"*UI.console.width
+        UI.rollback_manager.add(self, text)
+        UI.rollback_manager.set_level(self)
+        UI.rollback()
+
+    def _restart(self):
+        UI.rollback_manager.set_level(self)
+        UI.rollback()
