@@ -28,3 +28,22 @@ $ pwd
 /home/you/TextAdventure
 $ python src/main.py
 ```
+
+## Example imagery
+Since the application can't be run wihtout an active OpenAI key, we'll provide some image examples of the application. \
+The title screen:
+![Title screen](https://github.com/AnttiVainikka/TextAdventure/assets/77774384/d621387a-528a-4316-a925-ca0a5248fd19)
+A scenario description:
+![Scenario description](https://github.com/AnttiVainikka/TextAdventure/assets/77774384/8b12bde8-2068-4a4f-a783-6299e40c9dc9)
+Choosing a faction to interact with:
+![Faction choices](https://github.com/AnttiVainikka/TextAdventure/assets/77774384/5721ec56-f39f-4f85-a189-47afe1ae3a0d)
+Text generated while adventuring:
+![Example exploring text](https://github.com/AnttiVainikka/TextAdventure/assets/77774384/e2e1612f-c3a5-4e87-9e47-90452dc8201c)
+A combat encounter:
+![Example combat encounter](https://github.com/AnttiVainikka/TextAdventure/assets/77774384/7785c870-aa85-4ad8-8e90-8d8bf595e07e)
+An enemy:
+![Example enemy](https://github.com/AnttiVainikka/TextAdventure/assets/77774384/7f87c1da-a0f6-4466-867d-b51ff08331da)
+A protagonist:
+![Example protag](https://github.com/AnttiVainikka/TextAdventure/assets/77774384/8b0e88b2-1a3e-42ee-a6a2-ae2426c9e85d)
+Protagonist's inventory:
+![Example inventory](https://github.com/AnttiVainikka/TextAdventure/assets/77774384/8cc83c94-b581-4fd7-8cfa-2aff42e0c6c1)
